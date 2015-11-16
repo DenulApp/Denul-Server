@@ -16,8 +16,12 @@ import struct
 from messages import c2s_pb2
 from messages import metaMessage_pb2
 
+from storage.sqlite import SqliteBackend
+
 HOST = "0.0.0.0"
 PORT = 5566
+
+DATABASE = None
 
 
 ### Network helper functions
@@ -93,6 +97,9 @@ if __name__ == "__main__":
 
     # Add server socket to the list of readable connections
     CONNECTION_LIST.append(server_socket)
+
+    # Prepare the database
+    DATABASE = SqliteBackend()
 
     print "Denul server started on port " + str(PORT)
 
