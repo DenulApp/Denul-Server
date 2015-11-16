@@ -111,7 +111,17 @@ if __name__ == "__main__":
                     socktls = ssl.wrap_socket(sockfd, server_side=True,
                                               certfile="server.crt",
                                               keyfile="server.key")
-                    # TODO Set correct protocols (i.e. no SSLv2 / SSLv3)
+                    # I'd love to make this a more secure instance of an SSL
+                    # socket, but sadly, this would require python 2.7.9+,
+                    # which is not yet available in the ubuntu repos I am
+                    # using.
+                    # Right now, the socket still allows SSLv3 and RC4
+                    # connections, which is horrible, but the alternative
+                    # would be to only allow TLSv1 (and not v1.1 / v1.2),
+                    # which would be bad form as well.
+                    # Once a newer version of python is widely available, I may
+                    # change the code to use an ssl.Context object with the
+                    # correct settings for a secure socket.
                     CONNECTION_LIST.append(socktls)
 
                     print "Client (%s, %s) connected" % addr
