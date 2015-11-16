@@ -147,6 +147,13 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print "Interrupted. exiting"
 
+    # Try to close all sockets, ignoring any errors
+    for sock in CONNECTION_LIST:
+        try:
+            sock.close()
+        except Exception:
+            continue
+
     # If we reach this statement, the main loop has terminated
     # Close the socket
     server_socket.close()
