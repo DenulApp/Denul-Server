@@ -4,6 +4,9 @@
 # This code is adapted from the NFCGate Server Code
 # https://github.com/nfcgate/server
 # The NFCGate Server is licensed under the Apache License v2
+#
+# The NFCGate server code code was in turn inspired by
+# http://www.binarytides.com/code-chat-application-server-client-sockets-python
 
 import select
 import socket
