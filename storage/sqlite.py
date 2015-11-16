@@ -9,12 +9,15 @@ class SqliteBackend():
     Data is saved into and read from a local SQLite database.
     """
 
-    def __init__(self):
+    def __init__(self, dbname="denul.db"):
         """Initialize the DB backend.
 
-        This opens the SQLite database and performs sanity checks.
+        Open the SQLite database and perform sanity checks.
+
+        Keywork arguments:
+        dbname -- Name of the DB file. (default: denul.db)
         """
-        self.conn = sqlite3.connect("denul.db")
+        self.conn = sqlite3.connect(dbname)
         if not self._validate_layout():
             self._create_layout()
 
@@ -57,7 +60,7 @@ class SqliteBackend():
         c = self.conn.cursor()
 
         # Check if something already exists under that key
-        c.execute("SELECT * FROM kv WHERE key = ?", (key))
+        c.execute("SELECT * FROM kv WHERE key = ?", (key, ))
         if c.fetchone() is not None:
             raise KeyError("Key already in use")
 
@@ -78,7 +81,7 @@ class SqliteBackend():
         c = self.conn.cursor()
 
         # Retrieve value from database
-        c.execute("SELECT value FROM kv WHERE key = ?", (key))
+        c.execute("SELECT value FROM kv WHERE key = ?", (key, ))
 
         # Return the result (will be None if the key has no associated value)
         return c.fetchone()

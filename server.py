@@ -21,7 +21,7 @@ from storage.sqlite import SqliteBackend
 HOST = "0.0.0.0"
 PORT = 5566
 
-DATABASE = None
+DatabaseBackend = None
 
 
 ### Network helper functions
@@ -99,7 +99,12 @@ if __name__ == "__main__":
     CONNECTION_LIST.append(server_socket)
 
     # Prepare the database
-    DATABASE = SqliteBackend()
+    print "Initialize database"
+    DatabaseBackend = SqliteBackend()
+
+    print "Read existing keys into VICBF"
+    for key in DatabaseBackend.all_keys():
+        pass  # TODO insert into VICBF
 
     print "Denul server started on port " + str(PORT)
 
