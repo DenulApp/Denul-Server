@@ -5,8 +5,9 @@
 # https://github.com/nfcgate/server
 # The NFCGate Server is licensed under the Apache License v2
 
-import socket
 import select
+import socket
+import ssl
 import struct
 
 from messages import c2s_pb2
@@ -106,7 +107,13 @@ if __name__ == "__main__":
                     # recieved through server_socket
                     sockfd, addr = server_socket.accept()
 
-                    CONNECTION_LIST.append(sockfd)
+                    # Wrap the socket in a SSL/TLS socket
+                    socktls = ssl.wrap_socket(sockfd, server_side=True,
+                                              certfile="server.crt",
+                                              keyfile="server.key")
+                    # TODO Set correct protocols (i.e. no SSLv2 / SSLv3)
+                    CONNECTION_LIST.append(socktls)
+
                     print "Client (%s, %s) connected" % addr
 
                 # Some incoming message from a client
