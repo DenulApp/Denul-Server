@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='c2s.proto',
   package='de.velcommuta.denul.network.c2s',
-  serialized_pb=_b('\n\tc2s.proto\x12\x1f\x64\x65.velcommuta.denul.network.c2s\"#\n\x05Store\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\r\n\x05value\x18\x02 \x02(\x0c\"\xb7\x01\n\nStoreReply\x12J\n\x06opcode\x18\x01 \x02(\x0e\x32:.de.velcommuta.denul.network.c2s.StoreReply.StoreReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"P\n\x0eStoreReplyCode\x12\x0c\n\x08STORE_OK\x10\x00\x12\x18\n\x14STORE_FAIL_KEY_TAKEN\x10\x01\x12\x16\n\x12STORE_FAIL_UNKNOWN\x10\x02\"\x12\n\x03Get\x12\x0b\n\x03key\x18\x01 \x02(\t\"\xba\x01\n\x08GetReply\x12\x46\n\x06opcode\x18\x01 \x02(\x0e\x32\x36.de.velcommuta.denul.network.c2s.GetReply.GetReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\x12\r\n\x05value\x18\x03 \x01(\x0c\"J\n\x0cGetReplyCode\x12\n\n\x06GET_OK\x10\x00\x12\x18\n\x14GET_FAIL_UNKNOWN_KEY\x10\x01\x12\x14\n\x10GET_FAIL_UNKNOWN\x10\x02\"#\n\x06\x44\x65lete\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x0c\n\x04\x61uth\x18\x02 \x02(\t\"\xd4\x01\n\x0b\x44\x65leteReply\x12L\n\x06opcode\x18\x01 \x02(\x0e\x32<.de.velcommuta.denul.network.c2s.DeleteReply.DeleteReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"j\n\x0f\x44\x65leteReplyCode\x12\r\n\tDELETE_OK\x10\x00\x12\x14\n\x10\x44\x45LETE_FAIL_AUTH\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_NOT_FOUND\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_UNKNOWN\x10\x03\"0\n\x0b\x43lientHello\x12\x13\n\x0b\x63lientProto\x18\x01 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x02(\x0c\"0\n\x0bServerHello\x12\x13\n\x0bserverProto\x18\x01 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x02(\x0c')
+  serialized_pb=_b('\n\tc2s.proto\x12\x1f\x64\x65.velcommuta.denul.network.c2s\"#\n\x05Store\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\r\n\x05value\x18\x02 \x02(\x0c\"\xb7\x01\n\nStoreReply\x12J\n\x06opcode\x18\x01 \x02(\x0e\x32:.de.velcommuta.denul.network.c2s.StoreReply.StoreReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"P\n\x0eStoreReplyCode\x12\x0c\n\x08STORE_OK\x10\x00\x12\x18\n\x14STORE_FAIL_KEY_TAKEN\x10\x01\x12\x16\n\x12STORE_FAIL_UNKNOWN\x10\x02\"\x12\n\x03Get\x12\x0b\n\x03key\x18\x01 \x02(\t\"\xba\x01\n\x08GetReply\x12\x46\n\x06opcode\x18\x01 \x02(\x0e\x32\x36.de.velcommuta.denul.network.c2s.GetReply.GetReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\x12\r\n\x05value\x18\x03 \x01(\x0c\"J\n\x0cGetReplyCode\x12\n\n\x06GET_OK\x10\x00\x12\x18\n\x14GET_FAIL_UNKNOWN_KEY\x10\x01\x12\x14\n\x10GET_FAIL_UNKNOWN\x10\x02\"#\n\x06\x44\x65lete\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x0c\n\x04\x61uth\x18\x02 \x02(\t\"\xd4\x01\n\x0b\x44\x65leteReply\x12L\n\x06opcode\x18\x01 \x02(\x0e\x32<.de.velcommuta.denul.network.c2s.DeleteReply.DeleteReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"j\n\x0f\x44\x65leteReplyCode\x12\r\n\tDELETE_OK\x10\x00\x12\x14\n\x10\x44\x45LETE_FAIL_AUTH\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_NOT_FOUND\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_UNKNOWN\x10\x03\"0\n\x0b\x43lientHello\x12\x13\n\x0b\x63lientProto\x18\x01 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\xd6\x01\n\x0bServerHello\x12Q\n\x06opcode\x18\x01 \x02(\x0e\x32\x41.de.velcommuta.denul.network.c2s.ServerHello.ClientHelloReplyCode\x12\x13\n\x0bserverProto\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x02(\x0c\"Q\n\x14\x43lientHelloReplyCode\x12\x13\n\x0f\x43LIENT_HELLO_OK\x10\x00\x12$\n CLIENT_HELLO_PROTO_NOT_SUPPORTED\x10\x01')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -105,6 +105,28 @@ _DELETEREPLY_DELETEREPLYCODE = _descriptor.EnumDescriptor(
   serialized_end=728,
 )
 _sym_db.RegisterEnumDescriptor(_DELETEREPLY_DELETEREPLYCODE)
+
+_SERVERHELLO_CLIENTHELLOREPLYCODE = _descriptor.EnumDescriptor(
+  name='ClientHelloReplyCode',
+  full_name='de.velcommuta.denul.network.c2s.ServerHello.ClientHelloReplyCode',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='CLIENT_HELLO_OK', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CLIENT_HELLO_PROTO_NOT_SUPPORTED', index=1, number=1,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=914,
+  serialized_end=995,
+)
+_sym_db.RegisterEnumDescriptor(_SERVERHELLO_CLIENTHELLOREPLYCODE)
 
 
 _STORE = _descriptor.Descriptor(
@@ -348,7 +370,7 @@ _CLIENTHELLO = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='data', full_name='de.velcommuta.denul.network.c2s.ClientHello.data', index=1,
-      number=2, type=12, cpp_type=9, label=2,
+      number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -377,15 +399,22 @@ _SERVERHELLO = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='serverProto', full_name='de.velcommuta.denul.network.c2s.ServerHello.serverProto', index=0,
-      number=1, type=9, cpp_type=9, label=2,
+      name='opcode', full_name='de.velcommuta.denul.network.c2s.ServerHello.opcode', index=0,
+      number=1, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='serverProto', full_name='de.velcommuta.denul.network.c2s.ServerHello.serverProto', index=1,
+      number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='data', full_name='de.velcommuta.denul.network.c2s.ServerHello.data', index=1,
-      number=2, type=12, cpp_type=9, label=2,
+      name='data', full_name='de.velcommuta.denul.network.c2s.ServerHello.data', index=2,
+      number=3, type=12, cpp_type=9, label=2,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -395,14 +424,15 @@ _SERVERHELLO = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
+    _SERVERHELLO_CLIENTHELLOREPLYCODE,
   ],
   options=None,
   is_extendable=False,
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=780,
-  serialized_end=828,
+  serialized_start=781,
+  serialized_end=995,
 )
 
 _STOREREPLY.fields_by_name['opcode'].enum_type = _STOREREPLY_STOREREPLYCODE
@@ -411,6 +441,8 @@ _GETREPLY.fields_by_name['opcode'].enum_type = _GETREPLY_GETREPLYCODE
 _GETREPLY_GETREPLYCODE.containing_type = _GETREPLY
 _DELETEREPLY.fields_by_name['opcode'].enum_type = _DELETEREPLY_DELETEREPLYCODE
 _DELETEREPLY_DELETEREPLYCODE.containing_type = _DELETEREPLY
+_SERVERHELLO.fields_by_name['opcode'].enum_type = _SERVERHELLO_CLIENTHELLOREPLYCODE
+_SERVERHELLO_CLIENTHELLOREPLYCODE.containing_type = _SERVERHELLO
 DESCRIPTOR.message_types_by_name['Store'] = _STORE
 DESCRIPTOR.message_types_by_name['StoreReply'] = _STOREREPLY
 DESCRIPTOR.message_types_by_name['Get'] = _GET

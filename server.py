@@ -12,9 +12,10 @@ import select
 import socket
 import ssl
 import struct
+import sys
 
-from messages import c2s_pb2
-from messages import metaMessage_pb2
+from messages.c2s_pb2 import ClientHello, ServerHello
+from messages.metaMessage_pb2 import Wrapper
 
 from storage.sqlite import SqliteBackend
 
@@ -23,9 +24,25 @@ from vicbf.vicbf import VICBF
 HOST = "0.0.0.0"
 PORT = 5566
 
+DEBUG = True
+
 DatabaseBackend = None
 
 VicbfBackend = None
+
+THRESH_UP = None
+
+
+### Logging helper functions
+def debug(string):
+    """Print a debugging string if debugging is active.
+
+    Displays the function name of the caller to make debugging easier.
+    Caller detection code adapted from:
+    http://jugad2.blogspot.in/2015/09/find-caller-and-callers-caller-of.html
+    """
+    if DEBUG:
+        print sys._getframe(1).f_code.co_name + ":", string
 
 
 ### Network helper functions
@@ -44,7 +61,7 @@ def RecvOneMsg(sock):
     # Messages are prefixed with a 4-byte length indicator
     lengthbuf = SocketReadN(sock, 4)
     length = struct.unpack('>i', lengthbuf)[0]
-    wrapper = metaMessage_pb2.Wrapper()
+    wrapper = Wrapper()
     wrapper.ParseFromString(SocketReadN(sock, length))
     return wrapper
 
@@ -54,6 +71,7 @@ def sendMessage(msg, sock):
     # mb = [elem.encode('hex') for elem in ms]
     # Messages are sent as byte strings prefixed with their own length
     sock.sendall(struct.pack(">i", len(ms)) + ms)
+    debug("Message sent")
 
 
 ### Debugging helper functions
@@ -78,10 +96,31 @@ def HandleStoreMessage(msg, sock):
     pass
 
 
+def HandleClientHelloMessage(msg, sock):
+    rv = ServerHello()
+    rv.serverProto = "1.0"
+    if msg.clientProto == "1.0":
+        debug("Valid clientProto received")
+        rv.opcode = ServerHello.CLIENT_HELLO_OK
+        rv.data = b'0'  # TODO Put VICBF here
+    else:
+        debug("WARN: Invalid clientProto received")
+        rv.opcode = ServerHello.CLIENT_HELLO_PROTO_NOT_SUPPORTED
+        rv.data = b'0'
+    wrapper = Wrapper()
+    wrapper.ServerHello.MergeFrom(rv)
+    debug("Returning...")
+    return wrapper
+
+
 # Handler for all incoming messages
 def HandleMessage(message, sock):
     mtype = message.WhichOneof('message')
-    if mtype == "Store":
+    if mtype == "ClientHello":
+        debug("Received ClientHello")
+        return HandleClientHelloMessage(message.ClientHello, sock)
+    elif mtype == "Store":
+        debug("Received Store")
         return HandleStoreMessage(message.Store, sock)
     # and so on
 
@@ -122,7 +161,7 @@ if __name__ == "__main__":
     # After having inserted double the expected entries in the VICBF, the FPR
     # will be at roughly p = 0.006, or 0.6%. At this point, we should generate
     # a new, larger VICBF to accomodate further entries
-    threshold_up = expected_entries * 2
+    THRESH_UP = expected_entries * 2
     # Initialize the VICBF with the given values
     VicbfBackend = VICBF(slots, expected_entries, 3)
     # Insert all existing keys into the VICBF
