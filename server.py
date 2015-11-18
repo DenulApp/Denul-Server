@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 # This code is adapted from the NFCGate Server Code
 # https://github.com/nfcgate/server
@@ -18,10 +18,14 @@ from messages import metaMessage_pb2
 
 from storage.sqlite import SqliteBackend
 
+from vicbf.vicbf import VICBF
+
 HOST = "0.0.0.0"
 PORT = 5566
 
 DatabaseBackend = None
+
+VicbfBackend = None
 
 
 ### Network helper functions
@@ -103,13 +107,32 @@ if __name__ == "__main__":
     DatabaseBackend = SqliteBackend()
 
     print "Read existing keys into VICBF"
+    # Read existing keys from the database
+    keys = DatabaseBackend.all_keys()
+    # Calculate the number of expected entries
+    # For now, we will expect the number of entries to double, and add 1000
+    # to the estimation to account for very small initial values.
+    # This can probably be heavily optimized
+    expected_entries = len(keys) * 2 + 1000
+    # Taking 10 times the number of expected entries for the slot count will
+    # result in a FPR of p = ~0.0007, or 0.07% once the number of expected
+    # entries is reached.
+    slots = expected_entries * 10
+    # Calculate the threshold at which we should generate a new VICBF.
+    # After having inserted double the expected entries in the VICBF, the FPR
+    # will be at roughly p = 0.006, or 0.6%. At this point, we should generate
+    # a new, larger VICBF to accomodate further entries
+    threshold_up = expected_entries * 2
+    # Initialize the VICBF with the given values
+    VicbfBackend = VICBF(slots, expected_entries, 3)
+    # Insert all existing keys into the VICBF
     for key in DatabaseBackend.all_keys():
-        pass  # TODO insert into VICBF
+        VicbfBackend += key
 
     print "Denul server started on port " + str(PORT)
 
     try:
-        while 1:
+        while True:
             # Get the list sockets which are ready to be read through select
             read_sockets, write_sockets, error_sockets = \
                 select.select(CONNECTION_LIST, [], [])
