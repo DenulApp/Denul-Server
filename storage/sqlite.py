@@ -83,8 +83,11 @@ class SqliteBackend():
         # Retrieve value from database
         c.execute("SELECT value FROM kv WHERE key = ?", (key, ))
 
-        # Return the result (will be None if the key has no associated value)
-        return c.fetchone()
+        # Return the result
+        try:
+            return c.fetchone()[0]
+        except TypeError:  # Thrown if no result is in the database
+            return None
 
     def delete_kv(self, key):
         """Delete the key-value-pair associated with the provided key

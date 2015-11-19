@@ -10,7 +10,7 @@ from hashlib import sha256
 from os import urandom
 
 from messages.c2s_pb2 import ClientHello, ServerHello, Store, StoreReply, \
-    Delete, DeleteReply
+    Delete, DeleteReply, Get, GetReply
 from messages.metaMessage_pb2 import Wrapper
 from vicbf.vicbf import deserialize
 
@@ -89,6 +89,14 @@ def getStoreMessage(key, value):
     return wrapper
 
 
+def getGetMessage(key):
+    ge = Get()
+    ge.key = key
+    wrapper = Wrapper()
+    wrapper.Get.MergeFrom(ge)
+    return wrapper
+
+
 def getDeleteMessage(key, auth):
     dl = Delete()
     dl.key = key
@@ -124,6 +132,13 @@ def assertStoreState(msg, key, opcode=StoreReply.STORE_OK):
         "Message is no StoreReply"
     assert msg.StoreReply.opcode == opcode, "Incorrect opcode"
     assert msg.StoreReply.key == key, "Keys do not match"
+
+
+def assertGetState(msg, key, value="", opcode=GetReply.GET_OK):
+    assert msg.WhichOneof('message') == 'GetReply', "Message is no GetReply"
+    assert msg.GetReply.opcode == opcode, "Incorrect opcode"
+    assert msg.GetReply.value == value, "Incorrect value"
+    assert msg.GetReply.key == key, "Keys do not match"
 
 
 def assertDeletionState(msg, key, opcode=DeleteReply.DELETE_OK):
@@ -248,6 +263,7 @@ def test_Delete_bad_auth():
     reply = transceive(msg, sock)
     assertDeletionState(reply, key, opcode=DeleteReply.DELETE_FAIL_AUTH)
     delete(key, auth, sock)
+    sock.close()
 
 
 def test_Delete_bad_key():
@@ -259,6 +275,7 @@ def test_Delete_bad_key():
     reply = transceive(msg, sock)
     assertDeletionState(reply, "x" * 64, opcode=DeleteReply.DELETE_FAIL_KEY_FMT)
     delete(key, auth, sock)
+    sock.close()
 
 
 def test_Delete_nonexistant_key():
@@ -268,3 +285,35 @@ def test_Delete_nonexistant_key():
     msg = getDeleteMessage(key, auth)
     reply = transceive(msg, sock)
     assertDeletionState(reply, key, opcode=DeleteReply.DELETE_FAIL_NOT_FOUND)
+    sock.close()
+
+
+def test_Get():
+    # Test if the server reacts well to a valid Get request
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    store(key, value, sock)
+    msg = getGetMessage(key)
+    reply = transceive(msg, sock)
+    assertGetState(reply, key, value=value)
+    delete(key, auth, sock)
+    sock.close()
+
+
+def test_Get_bad_key():
+    # Test if the server refuses to Get an invalid key
+    sock = getSocket()
+    msg = getGetMessage("x" * 64)
+    reply = transceive(msg, sock)
+    assertGetState(reply, "x" * 64, opcode=GetReply.GET_FAIL_KEY_FMT)
+    sock.close()
+
+
+def test_Get_nonexistant_key():
+    # Test how the server reacts to a query for a nonexistant key
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    msg = getGetMessage(key)
+    reply = transceive(msg, sock)
+    assertGetState(reply, key, opcode=GetReply.GET_FAIL_UNKNOWN_KEY)
+    sock.close()

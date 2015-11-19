@@ -16,7 +16,7 @@ import struct
 import sys
 import zlib
 
-from messages.c2s_pb2 import ServerHello, StoreReply, DeleteReply
+from messages.c2s_pb2 import ServerHello, StoreReply, DeleteReply, GetReply
 from messages.metaMessage_pb2 import Wrapper
 from storage.sqlite import SqliteBackend
 from vicbf.vicbf import VICBF
@@ -45,7 +45,7 @@ class Cache():
 HOST = "0.0.0.0"
 PORT = 5566
 
-DEBUG = True
+DEBUG = False
 
 DatabaseBackend = None
 
@@ -240,6 +240,26 @@ def HandleDeleteMessage(msg, sock):
     return wrapper
 
 
+def HandleGetMessage(msg, sock):
+    rv = GetReply()
+    rv.key = msg.key
+    if keyFormatValid(msg.key):
+        value = DatabaseBackend.query_kv(msg.key)
+        if value is not None:
+            debug("Got value")
+            rv.value = str(value)
+            rv.opcode = GetReply.GET_OK
+        else:
+            debug("WARN: Unknown key requested")
+            rv.opcode = GetReply.GET_FAIL_UNKNOWN_KEY
+    else:
+        debug("WARN: Malformed key")
+        rv.opcode = GetReply.GET_FAIL_KEY_FMT
+    wrapper = Wrapper()
+    wrapper.GetReply.MergeFrom(rv)
+    return wrapper
+
+
 # Handler for all incoming messages
 def HandleMessage(message, sock):
     mtype = message.WhichOneof('message')
@@ -252,6 +272,9 @@ def HandleMessage(message, sock):
     elif mtype == "Delete":
         debug("Received Delete")
         return HandleDeleteMessage(message.Delete, sock)
+    elif mtype == "Get":
+        debug("Received Get")
+        return HandleGetMessage(message.Get, sock)
     # and so on
 
 
