@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='c2s.proto',
   package='de.velcommuta.denul.network.c2s',
-  serialized_pb=_b('\n\tc2s.proto\x12\x1f\x64\x65.velcommuta.denul.network.c2s\"#\n\x05Store\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\r\n\x05value\x18\x02 \x02(\x0c\"\xb7\x01\n\nStoreReply\x12J\n\x06opcode\x18\x01 \x02(\x0e\x32:.de.velcommuta.denul.network.c2s.StoreReply.StoreReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"P\n\x0eStoreReplyCode\x12\x0c\n\x08STORE_OK\x10\x00\x12\x18\n\x14STORE_FAIL_KEY_TAKEN\x10\x01\x12\x16\n\x12STORE_FAIL_UNKNOWN\x10\x02\"\x12\n\x03Get\x12\x0b\n\x03key\x18\x01 \x02(\t\"\xba\x01\n\x08GetReply\x12\x46\n\x06opcode\x18\x01 \x02(\x0e\x32\x36.de.velcommuta.denul.network.c2s.GetReply.GetReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\x12\r\n\x05value\x18\x03 \x01(\x0c\"J\n\x0cGetReplyCode\x12\n\n\x06GET_OK\x10\x00\x12\x18\n\x14GET_FAIL_UNKNOWN_KEY\x10\x01\x12\x14\n\x10GET_FAIL_UNKNOWN\x10\x02\"#\n\x06\x44\x65lete\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x0c\n\x04\x61uth\x18\x02 \x02(\t\"\xd4\x01\n\x0b\x44\x65leteReply\x12L\n\x06opcode\x18\x01 \x02(\x0e\x32<.de.velcommuta.denul.network.c2s.DeleteReply.DeleteReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"j\n\x0f\x44\x65leteReplyCode\x12\r\n\tDELETE_OK\x10\x00\x12\x14\n\x10\x44\x45LETE_FAIL_AUTH\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_NOT_FOUND\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_UNKNOWN\x10\x03\"0\n\x0b\x43lientHello\x12\x13\n\x0b\x63lientProto\x18\x01 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\xd6\x01\n\x0bServerHello\x12Q\n\x06opcode\x18\x01 \x02(\x0e\x32\x41.de.velcommuta.denul.network.c2s.ServerHello.ClientHelloReplyCode\x12\x13\n\x0bserverProto\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x02(\x0c\"Q\n\x14\x43lientHelloReplyCode\x12\x13\n\x0f\x43LIENT_HELLO_OK\x10\x00\x12$\n CLIENT_HELLO_PROTO_NOT_SUPPORTED\x10\x01')
+  serialized_pb=_b('\n\tc2s.proto\x12\x1f\x64\x65.velcommuta.denul.network.c2s\"#\n\x05Store\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\r\n\x05value\x18\x02 \x02(\x0c\"\xcf\x01\n\nStoreReply\x12J\n\x06opcode\x18\x01 \x02(\x0e\x32:.de.velcommuta.denul.network.c2s.StoreReply.StoreReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"h\n\x0eStoreReplyCode\x12\x0c\n\x08STORE_OK\x10\x00\x12\x18\n\x14STORE_FAIL_KEY_TAKEN\x10\x01\x12\x16\n\x12STORE_FAIL_KEY_FMT\x10\x02\x12\x16\n\x12STORE_FAIL_UNKNOWN\x10\x03\"\x12\n\x03Get\x12\x0b\n\x03key\x18\x01 \x02(\t\"\xba\x01\n\x08GetReply\x12\x46\n\x06opcode\x18\x01 \x02(\x0e\x32\x36.de.velcommuta.denul.network.c2s.GetReply.GetReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\x12\r\n\x05value\x18\x03 \x01(\x0c\"J\n\x0cGetReplyCode\x12\n\n\x06GET_OK\x10\x00\x12\x18\n\x14GET_FAIL_UNKNOWN_KEY\x10\x01\x12\x14\n\x10GET_FAIL_UNKNOWN\x10\x02\"#\n\x06\x44\x65lete\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x0c\n\x04\x61uth\x18\x02 \x02(\t\"\xd4\x01\n\x0b\x44\x65leteReply\x12L\n\x06opcode\x18\x01 \x02(\x0e\x32<.de.velcommuta.denul.network.c2s.DeleteReply.DeleteReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"j\n\x0f\x44\x65leteReplyCode\x12\r\n\tDELETE_OK\x10\x00\x12\x14\n\x10\x44\x45LETE_FAIL_AUTH\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_NOT_FOUND\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_UNKNOWN\x10\x03\"0\n\x0b\x43lientHello\x12\x13\n\x0b\x63lientProto\x18\x01 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\xd6\x01\n\x0bServerHello\x12Q\n\x06opcode\x18\x01 \x02(\x0e\x32\x41.de.velcommuta.denul.network.c2s.ServerHello.ClientHelloReplyCode\x12\x13\n\x0bserverProto\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x02(\x0c\"Q\n\x14\x43lientHelloReplyCode\x12\x13\n\x0f\x43LIENT_HELLO_OK\x10\x00\x12$\n CLIENT_HELLO_PROTO_NOT_SUPPORTED\x10\x01')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -39,14 +39,18 @@ _STOREREPLY_STOREREPLYCODE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='STORE_FAIL_UNKNOWN', index=2, number=2,
+      name='STORE_FAIL_KEY_FMT', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='STORE_FAIL_UNKNOWN', index=3, number=3,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
   serialized_start=187,
-  serialized_end=267,
+  serialized_end=291,
 )
 _sym_db.RegisterEnumDescriptor(_STOREREPLY_STOREREPLYCODE)
 
@@ -71,8 +75,8 @@ _GETREPLY_GETREPLYCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=402,
-  serialized_end=476,
+  serialized_start=426,
+  serialized_end=500,
 )
 _sym_db.RegisterEnumDescriptor(_GETREPLY_GETREPLYCODE)
 
@@ -101,8 +105,8 @@ _DELETEREPLY_DELETEREPLYCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=622,
-  serialized_end=728,
+  serialized_start=646,
+  serialized_end=752,
 )
 _sym_db.RegisterEnumDescriptor(_DELETEREPLY_DELETEREPLYCODE)
 
@@ -123,8 +127,8 @@ _SERVERHELLO_CLIENTHELLOREPLYCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=914,
-  serialized_end=995,
+  serialized_start=938,
+  serialized_end=1019,
 )
 _sym_db.RegisterEnumDescriptor(_SERVERHELLO_CLIENTHELLOREPLYCODE)
 
@@ -200,7 +204,7 @@ _STOREREPLY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=84,
-  serialized_end=267,
+  serialized_end=291,
 )
 
 
@@ -229,8 +233,8 @@ _GET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=269,
-  serialized_end=287,
+  serialized_start=293,
+  serialized_end=311,
 )
 
 
@@ -274,8 +278,8 @@ _GETREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=290,
-  serialized_end=476,
+  serialized_start=314,
+  serialized_end=500,
 )
 
 
@@ -311,8 +315,8 @@ _DELETE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=478,
-  serialized_end=513,
+  serialized_start=502,
+  serialized_end=537,
 )
 
 
@@ -349,8 +353,8 @@ _DELETEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=516,
-  serialized_end=728,
+  serialized_start=540,
+  serialized_end=752,
 )
 
 
@@ -386,8 +390,8 @@ _CLIENTHELLO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=730,
-  serialized_end=778,
+  serialized_start=754,
+  serialized_end=802,
 )
 
 
@@ -431,8 +435,8 @@ _SERVERHELLO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=781,
-  serialized_end=995,
+  serialized_start=805,
+  serialized_end=1019,
 )
 
 _STOREREPLY.fields_by_name['opcode'].enum_type = _STOREREPLY_STOREREPLYCODE

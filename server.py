@@ -15,7 +15,7 @@ import struct
 import sys
 import zlib
 
-from messages.c2s_pb2 import ClientHello, ServerHello
+from messages.c2s_pb2 import ServerHello, StoreReply
 from messages.metaMessage_pb2 import Wrapper
 
 from storage.sqlite import SqliteBackend
@@ -29,13 +29,16 @@ class Cache():
 
     def getVicbfCache(self):
         if self.vicbfcache is not None:
+            debug("Cache hit")
             return self.vicbfcache
         else:
+            debug("Cache miss")
             serialized = VicbfBackend.serialize().tobytes()
             self.vicbfcache = zlib.compress(serialized, 6)
             return self.vicbfcache
 
     def invalidateVicbf(self):
+        debug("Cache invalidated")
         self.vicbfcache = None
 
 
@@ -81,7 +84,11 @@ def RecvOneMsg(sock):
     lengthbuf = SocketReadN(sock, 4)
     length = struct.unpack('>i', lengthbuf)[0]
     wrapper = Wrapper()
-    wrapper.ParseFromString(SocketReadN(sock, length))
+    try:
+        wrapper.ParseFromString(SocketReadN(sock, length))
+    except Exception, e:
+        debug("ERROR: Message parsing failed: " + e)
+        wrapper = None
     return wrapper
 
 
@@ -107,6 +114,11 @@ def invalidateVicbfSerializationCache():
     VicbfCache.invalidateVicbf()
 
 
+### Format checker helper functions
+def keyFormatValid(key):
+    return True
+
+
 ##### Message Creation Functions
 # Example function:
 # def getSessionMessage(code_tuple):
@@ -119,25 +131,67 @@ def invalidateVicbfSerializationCache():
 
 
 ##### Handlers
-# Handler for "Store" messages
-def HandleStoreMessage(msg, sock):
-    pass
-
-
+# Handler for ClientHello messages
 def HandleClientHelloMessage(msg, sock):
     rv = ServerHello()
     rv.serverProto = "1.0"
     if msg.clientProto == "1.0":
+        # We are talking protocol version 1.0
         debug("Valid clientProto received")
+        # Set Opcode to indicate compatibility
         rv.opcode = ServerHello.CLIENT_HELLO_OK
+        # Add serialized Bloom Filter
         rv.data = getVicbfSerialization()
     else:
+        # We don't know the protocol version the other party is speaking
         debug("WARN: Invalid clientProto received")
+        # Set opcode to indicate incompatibility
         rv.opcode = ServerHello.CLIENT_HELLO_PROTO_NOT_SUPPORTED
+        # Set required data field to placeholder
         rv.data = b'0'
+    # Pack reply into Wrapper message
     wrapper = Wrapper()
     wrapper.ServerHello.MergeFrom(rv)
-    debug("Returning...")
+    # Return reply
+    return wrapper
+
+
+# Handler for Store messages
+def HandleStoreMessage(msg, sock):
+    rv = StoreReply()
+    rv.key = msg.key
+    if keyFormatValid(msg.key):
+        # The key is valid
+        try:
+            # Insert into database
+            DatabaseBackend.insert_kv(msg.key, msg.value)
+            debug("Inserted into DB")
+            # Insert into VICBF
+            VicbfBackend.insert(msg.key)
+            debug("Inserted into VICBF")
+            # Invalidate VICBF cache
+            invalidateVicbfSerializationCache()
+            # Set opcode to indicate success
+            rv.opcode = StoreReply.STORE_OK
+            debug("Done")
+        except KeyError:
+            # The KeyError was thrown by the Database backend and indicates
+            # that the key is already taken
+            debug("WARN: Attempt to insert key that is already taken")
+            rv.opcode = StoreReply.STORE_FAIL_KEY_TAKEN
+        except Exception, e:
+            # An unexpected exception was thrown - this indicates a bug
+            debug("ERROR: Unexpected exception: " + repr(e))
+            rv.opcode = StoreReply.STORE_FAIL_UNKNOWN
+    else:
+        # Key has an invalid format, ignore message
+        debug("WARN: Invalid key format")
+        rv.opcode = StoreReply.STORE_FAIL_KEY_FMT
+    # Create wrapper message
+    wrapper = Wrapper()
+    # Merge StoreReply into it
+    wrapper.StoreReply.MergeFrom(rv)
+    # Return the reply
     return wrapper
 
 
