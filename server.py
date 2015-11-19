@@ -45,7 +45,7 @@ class Cache():
 HOST = "0.0.0.0"
 PORT = 5566
 
-DEBUG = False
+DEBUG = True
 
 DatabaseBackend = None
 
@@ -241,22 +241,35 @@ def HandleDeleteMessage(msg, sock):
 
 
 def HandleGetMessage(msg, sock):
+    # Prepare GetReply message
     rv = GetReply()
+    # Set the key
     rv.key = msg.key
+    # Check if the key is valid
     if keyFormatValid(msg.key):
+        # Retrieve value from database, if available
         value = DatabaseBackend.query_kv(msg.key)
+        # Check if we actually got a value
         if value is not None:
             debug("Got value")
+            # We got a value! Save it to the GetReply message
             rv.value = str(value)
+            # Set the opcode to indicate success
             rv.opcode = GetReply.GET_OK
         else:
             debug("WARN: Unknown key requested")
+            # Seems like we have no associated value - set opcode to indicate
+            # failure
             rv.opcode = GetReply.GET_FAIL_UNKNOWN_KEY
     else:
         debug("WARN: Malformed key")
+        # Set the opcode to indicate that the key was malformed
         rv.opcode = GetReply.GET_FAIL_KEY_FMT
+    # Prepare a wrapper
     wrapper = Wrapper()
+    # Merge GetReply into it
     wrapper.GetReply.MergeFrom(rv)
+    # Return reply
     return wrapper
 
 
