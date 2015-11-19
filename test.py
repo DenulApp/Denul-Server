@@ -113,21 +113,24 @@ def parseVICBF(serialized):
 
 
 def assertServerHelloState(msg, opcode=ServerHello.CLIENT_HELLO_OK):
-    assert msg.WhichOneof('message') == 'ServerHello'
-    assert msg.ServerHello.opcode == opcode
-    assert msg.ServerHello.serverProto == "1.0"
+    assert msg.WhichOneof('message') == 'ServerHello', \
+        "Message is no ServerHello"
+    assert msg.ServerHello.opcode == opcode, "Incorrect opcode"
+    assert msg.ServerHello.serverProto == "1.0", "Incorrect version number"
 
 
 def assertStoreState(msg, key, opcode=StoreReply.STORE_OK):
-    assert msg.WhichOneof('message') == 'StoreReply'
-    assert msg.StoreReply.opcode == opcode
-    assert msg.StoreReply.key == key
+    assert msg.WhichOneof('message') == 'StoreReply', \
+        "Message is no StoreReply"
+    assert msg.StoreReply.opcode == opcode, "Incorrect opcode"
+    assert msg.StoreReply.key == key, "Keys do not match"
 
 
 def assertDeletionState(msg, key, opcode=DeleteReply.DELETE_OK):
-    assert msg.WhichOneof('message') == 'DeleteReply'
-    assert msg.DeleteReply.opcode == opcode
-    assert msg.DeleteReply.key == key
+    assert msg.WhichOneof('message') == 'DeleteReply', \
+        "Message is no DeleteReply"
+    assert msg.DeleteReply.opcode == opcode, "Incorrect opcode"
+    assert msg.DeleteReply.key == key, "Keys do not match"
 
 
 def delete(key, auth, sock):
@@ -151,10 +154,7 @@ def test_ClientHello():
     reply = transceive(msg, sock)
     assertServerHelloState(reply)
     assert reply.ServerHello.data != b'0'
-    try:
-        assert parseVICBF(reply.ServerHello.data) is not None
-    except:
-        assert False, "Unexpected exception occured during VICBF parsing"
+    assert parseVICBF(reply.ServerHello.data) is not None
     sock.close()
 
 
@@ -164,7 +164,6 @@ def test_ClientHello_invalid():
     sock = getSocket()
     msg = getClientHelloMessage(version="2.0")
     reply = transceive(msg, sock)
-    assert reply.WhichOneof('message') == 'ServerHello'
     assertServerHelloState(reply, ServerHello.CLIENT_HELLO_PROTO_NOT_SUPPORTED)
     assert reply.ServerHello.data == b'0'
     sock.close()
