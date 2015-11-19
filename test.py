@@ -101,9 +101,9 @@ def getDeleteMessage(key, auth):
 def getKVPair():
     nonce = urandom(8)
     value = urandom(16).encode('hex')
-    rev = sha256(nonce).hexdigest()
-    key = sha256(rev).hexdigest()
-    return key, rev, value
+    auth = sha256(nonce).hexdigest()
+    key = sha256(auth).hexdigest()
+    return key, auth, value
 
 
 def parseVICBF(serialized):
@@ -146,126 +146,126 @@ def store(key, value, sock):
 def test_ClientHello():
     # This test sends a valid ClientHello and ensures that the reply is valid
     # and contains a valid compressed VICBF
-    sock1 = getSocket()
+    sock = getSocket()
     msg = getClientHelloMessage()
-    reply = transceive(msg, sock1)
+    reply = transceive(msg, sock)
     assertServerHelloState(reply)
     assert reply.ServerHello.data != b'0'
     try:
         assert parseVICBF(reply.ServerHello.data) is not None
     except:
         assert False, "Unexpected exception occured during VICBF parsing"
-    sock1.close()
+    sock.close()
 
 
 def test_ClientHello_invalid():
     # This test sends in invalid ClientHello and ensures that the reply is an
     # error message
-    sock1 = getSocket()
+    sock = getSocket()
     msg = getClientHelloMessage(version="2.0")
-    reply = transceive(msg, sock1)
+    reply = transceive(msg, sock)
     assert reply.WhichOneof('message') == 'ServerHello'
     assertServerHelloState(reply, ServerHello.CLIENT_HELLO_PROTO_NOT_SUPPORTED)
     assert reply.ServerHello.data == b'0'
-    sock1.close()
+    sock.close()
 
 
 def test_Store_and_Delete():
     # This test attempts to store a key-value-pair on the server
-    sock1 = getSocket()
-    key, rev, value = getKVPair()
-    store(key, value, sock1)
-    msg = getDeleteMessage(key, rev)
-    reply = transceive(msg, sock1)
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    store(key, value, sock)
+    msg = getDeleteMessage(key, auth)
+    reply = transceive(msg, sock)
     assertDeletionState(reply, key)
-    sock1.close()
+    sock.close()
 
 
 def test_Store_in_VICBF():
     # This test attempts to store a key-value-pair on the server and checks
     # if the key has been inserted into the VICBF
     # Insert KV on server
-    sock1 = getSocket()
-    key, rev, value = getKVPair()
-    store(key, value, sock1)
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    store(key, value, sock)
     # KV has been inserted
     # Get a ServerHello message with the updated VICBF from the server
     msg = getClientHelloMessage()
-    reply = transceive(msg, sock1)
+    reply = transceive(msg, sock)
     # Ensure that we got a good ServerHello
     assertServerHelloState(reply)
     # Parse VICBF
     v = parseVICBF(reply.ServerHello.data)
     # Assert VICBF status
     assert key in v
-    assert rev not in v
+    assert auth not in v
     # Delete kv pair from server
-    delete(key, rev, sock1)
-    sock1.close()
+    delete(key, auth, sock)
+    sock.close()
 
 
 def test_Store_invalid_key_length():
     # This test checks the behaviour of the server if we are trying to store
     # a key with the wrong length
-    sock1 = getSocket()
+    sock = getSocket()
     key = "deadbeefdecafbad"
     msg = getStoreMessage(key, key)
-    reply = transceive(msg, sock1)
+    reply = transceive(msg, sock)
     assertStoreState(reply, key, opcode=StoreReply.STORE_FAIL_KEY_FMT)
-    sock1.close()
+    sock.close()
 
 
 def test_Store_invalid_key_characters():
     # This test checks the behaviour of the server if we are trying to store
     # a key with non-hexadecimal characters
-    sock1 = getSocket()
+    sock = getSocket()
     key = "x" * 64
     msg = getStoreMessage(key, key)
-    reply = transceive(msg, sock1)
+    reply = transceive(msg, sock)
     assertStoreState(reply, key, opcode=StoreReply.STORE_FAIL_KEY_FMT)
-    sock1.close()
+    sock.close()
 
 
 def test_Store_duplicate_key():
     # This test checks the behaviour of the server if we are trying to store
     # two values under the same key
-    sock1 = getSocket()
-    key, rev, value = getKVPair()
-    store(key, value, sock1)
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    store(key, value, sock)
     value = urandom(16).encode('hex')
     msg = getStoreMessage(key, value)
-    reply = transceive(msg, sock1)
+    reply = transceive(msg, sock)
     assertStoreState(reply, key, opcode=StoreReply.STORE_FAIL_KEY_TAKEN)
-    delete(key, rev, sock1)
-    sock1.close()
+    delete(key, auth, sock)
+    sock.close()
 
 
 def test_Delete_bad_auth():
     # Test if the deletion really fails if we use a bad authenticator
-    sock1 = getSocket()
-    key, rev, value = getKVPair()
-    store(key, value, sock1)
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    store(key, value, sock)
     msg = getDeleteMessage(key, key)
-    reply = transceive(msg, sock1)
+    reply = transceive(msg, sock)
     assertDeletionState(reply, key, opcode=DeleteReply.DELETE_FAIL_AUTH)
-    delete(key, rev, sock1)
+    delete(key, auth, sock)
 
 
 def test_Delete_bad_key():
     # Test if the deletion fails if a bad key is provided
-    sock1 = getSocket()
-    key, rev, value = getKVPair()
-    store(key, value, sock1)
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    store(key, value, sock)
     msg = getDeleteMessage("x" * 64, "x" * 64)
-    reply = transceive(msg, sock1)
-    assertDeletionState(reply, "x" * 64, DeleteReply.DELETE_FAIL_KEY_FMT)
-    delete(key, rev, sock1)
+    reply = transceive(msg, sock)
+    assertDeletionState(reply, "x" * 64, opcode=DeleteReply.DELETE_FAIL_KEY_FMT)
+    delete(key, auth, sock)
 
 
 def test_Delete_nonexistant_key():
     # Test if the deletion fails if the key is not present
-    sock1 = getSocket()
-    key, rev, value = getKVPair()
-    msg = getDeleteMessage(key, rev)
-    reply = transceive(msg, sock1)
-    assertDeletionState(reply, key, DeleteReply.DELETE_FAIL_NOT_FOUND)
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    msg = getDeleteMessage(key, auth)
+    reply = transceive(msg, sock)
+    assertDeletionState(reply, key, opcode=DeleteReply.DELETE_FAIL_NOT_FOUND)
