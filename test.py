@@ -160,6 +160,13 @@ def store(key, value, sock):
     assertStoreState(reply, key)
 
 
+def getVICBF(sock):
+    msg = getClientHelloMessage()
+    reply = transceive(msg, sock)
+    assertServerHelloState(reply)
+    return parseVICBF(reply.ServerHello.data)
+
+
 ##### Test Suite
 def test_ClientHello():
     # This test sends a valid ClientHello and ensures that the reply is valid
@@ -285,6 +292,19 @@ def test_Delete_nonexistant_key():
     msg = getDeleteMessage(key, auth)
     reply = transceive(msg, sock)
     assertDeletionState(reply, key, opcode=DeleteReply.DELETE_FAIL_NOT_FOUND)
+    sock.close()
+
+
+def test_Delete_from_vicbf():
+    # Test if the deletion actually removes the key from the VICBF
+    sock = getSocket()
+    key, auth, value = getKVPair()
+    store(key, value, sock)
+    vicbf = getVICBF(sock)
+    assert key in vicbf
+    delete(key, auth, sock)
+    vicbf = getVICBF(sock)
+    assert key not in vicbf
     sock.close()
 
 
