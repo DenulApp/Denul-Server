@@ -201,17 +201,17 @@ class VICBF():
             # Get the header of the serialized data
             serialized = self._build_header(self.MODE_DUMP_ALL)
             # Determine the format it will be serialized in
+            # if self.bpc == 8:
+            #     def lookup(key):
+            #         try:
+            #             return self.BF[key]
+            #         except:
+            #             return 0
+            #     print "efficient"
+            #     fmt = "<" + str(self.slots) + "B"
+            #     args = [lookup(key) for key in range(self.slots)]
+            #     serialized.append(pack(fmt, *args))
             if self.bpc == 8:
-                def lookup(key):
-                    try:
-                        return self.BF[key]
-                    except:
-                        return 0
-                print "efficient"
-                fmt = "<" + str(self.slots) + "B"
-                args = [lookup(key) for key in range(self.slots)]
-                serialized.append(pack(fmt, *args))
-            elif self.bpc == 8:
                 def BFGenerator():
                     for i in range(self.slots):
                         try:
