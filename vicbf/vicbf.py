@@ -19,21 +19,22 @@ This implementation is built for readability, not efficiency. If you need an
 efficient VICBF implementation, build your own :)
 """
 import hashlib
-from math import factorial as fac
+from math import factorial, log, ceil
+from bitstring import pack, ReadError
 
 
 class VICBF():
     """A basic VICBF implementation"""
 
-    def __init__(self, slots, expected_entries, hash_functions, vibase=4):
+    MODE_DUMP_ALL  = 0
+    MODE_SELECTIVE = 1
+
+    def __init__(self, slots, hash_functions, vibase=4, bpc=8):
         """Counstructor for the VICBF.
 
         Attributes:
             slots -- The number of slots (counters) the bloom filter should use.
             called "m" in the paper.
-
-            expected_entries -- The expected maximum number of entries the bloom
-            filter will contain at any one time. Called |S| = n in the paper.
 
             hash_functions -- The number of hash functions to use. Called k in the
             paper.
@@ -45,19 +46,19 @@ class VICBF():
         # TODO See if I can change the parameter to state a desired FPR
         if slots < 1:
             raise ValueError("slots must be >=1")
-        if expected_entries < 1:
-            raise ValueError("expected_entries must be >=1")
         if hash_functions < 1:
             raise ValueError("hash_functions must be >=1")
         if vibase not in (2, 4, 8, 16):
             raise ValueError("vibase must be one of 2, 4, 8, 16")
         self.BF = {}
         self.slots = slots
-        self.expected_entries = expected_entries
         self.entries = 0
         self.hash_functions = hash_functions
         self.L = vibase
-        self.m = 8  # Number of bits per counter
+        # Number of bits per counter
+        self.bpc = bpc
+        # Number of bits per counter index - will be used during serialization
+        self.bpi = ceil(log(self.slots, 2))
 
     def insert(self, key):
         """Insert a value into the bloom filter
@@ -72,8 +73,8 @@ class VICBF():
             slot_index, increment = self._calculate_slot_and_increment(key, i)
             # Perform the increment in the bloom filter
             try:
-                if self.BF[slot_index] + increment >= 2 ** self.m - 1:
-                    self.BF[slot_index] = 2 ** self.m - 1
+                if self.BF[slot_index] + increment >= 2 ** self.bpc - 1:
+                    self.BF[slot_index] = 2 ** self.bpc - 1
                 else:
                     self.BF[slot_index] += increment
             except KeyError:
@@ -93,7 +94,7 @@ class VICBF():
             slot_index, decrement = self._calculate_slot_and_increment(key, i)
             # Perform the decrement in the bloom filter
             try:
-                if self.BF[slot_index] == 2 ** self.m - 1:
+                if self.BF[slot_index] == 2 ** self.bpc - 1:
                     # If the counter experienced an overflow, we cannot modify
                     # it, as that may lead to false negatives in the long run.
                     # Leave it as it is and continue on
@@ -179,6 +180,93 @@ class VICBF():
         return self._calculate_FPR(self.slots, self.size(),
                                    self.hash_functions, self.L)
 
+    def serialize(self):
+        """Serialize the VICBF into a binary data structure and return it."""
+        # For serialization, we have two options:
+        # - We can serialize as indexed key-value-pairs for individual slot
+        #   numbers and counter values. This would cost us self.bpc bit per
+        #   counter value, plus self.bpi per index.
+        # - We can just dump all values as self.bpc bit values, inserting
+        #   zeroes where counters are not set. This will cost us a constant
+        #   "self.bpc * number of slots" bit
+        # Which one of these schemes is more efficient depends on the number
+        # of set counters: If only very few counters are set, it's more
+        # efficient to dump indexed counter values. If a large number of
+        # counters is set, dumping everything avoids the overhead of the index.
+        # The following calculation determines which is more efficient:
+        if len(self.BF) * (self.bpi + self.bpc) > self.slots * self.bpc:
+            # If this statement is reached, it is more efficient to write out
+            # all values in the bloom filter as self.bpc-bit values instead
+            # of writing indexed slot-counter pairs
+            # Get the header of the serialized data
+            serialized = self._build_header(self.MODE_DUMP_ALL)
+            # Determine the format it will be serialized in
+            if self.bpc == 8:
+                def lookup(key):
+                    try:
+                        return self.BF[key]
+                    except:
+                        return 0
+                print "efficient"
+                fmt = "<" + str(self.slots) + "B"
+                args = [lookup(key) for key in range(self.slots)]
+                serialized.append(pack(fmt, *args))
+            elif self.bpc == 8:
+                def BFGenerator():
+                    for i in range(self.slots):
+                        try:
+                            yield self.BF[i]
+                        except KeyError:
+                            yield 0
+                print "generator"
+                fmt = "<" + str(self.slots) + "B"
+                generator = BFGenerator()
+                serialized.append(pack(fmt, *generator))
+                # for i in generator:
+                #     pass
+            else:
+                fmt = 'uint:' + str(self.bpc)
+                # Start serializing
+                for slot in range(self.slots):
+                    # TODO This needs to be optimized, it's slow as hell
+                    try:
+                        serialized.append(pack(fmt, self.BF[slot]))
+                    except KeyError:
+                        # If we get a key error, it means that the counter is not
+                        # set and thus implicitly has the value zero
+                        serialized.append(pack(fmt, 0))
+            # Return the serialized data
+            return serialized
+        else:
+            # If this statement is reached, it is more efficient to write out
+            # indexed slot-counter-pairs.
+            # Get the header for the serialized data
+            serialized = self._build_header(self.MODE_SELECTIVE)
+            # Determine the format it will be serialized in
+            fmt_ctr = 'uint:' + str(int(self.bpc))
+            fmt_idx = 'uint:' + str(int(self.bpi))
+            fmt = fmt_idx + ", " + fmt_ctr
+            # Serialize existing slots with their counters
+            for slot in self.BF:
+                serialized.append(pack(fmt, slot, self.BF[slot]))
+            # Return serialized data
+            return serialized
+
+    def _build_header(self, mode):
+        # Prepare header. Format:
+        # - 1 bit Mode indicator (MODE_DUMP_ALL / MODE_SELECTIVE)
+        # - 3 bit hash function count indicator
+        # - 32 bit slot count indicator
+        # - 4 bit vibase indicator
+        # - 4 bit counter size indicator
+        header = pack('uint:1, uint:3, uint:32, uint:4, uint:4',
+                      mode,
+                      self.hash_functions,
+                      self.slots,
+                      self.L,
+                      self.bpc)
+        return header
+
     def _calculate_slot_and_increment(self, key, i):
         """Helper function to calculate the slot and increment value"""
         # Get a sha1 hash of the key, combined with a running integer to
@@ -221,7 +309,7 @@ class VICBF():
         """Helper function to calculate the binomial coefficient"""
         # Source: http://stackoverflow.com/a/26561091/1232833
         try:
-            binom = fac(x) // fac(y) // fac(x - y)
+            binom = factorial(x) // factorial(y) // factorial(x - y)
         except ValueError:
             binom = 0
         return binom
@@ -243,3 +331,37 @@ class VICBF():
     def __len__(self):
         """Shorthand for size function. Allows len(x) syntax"""
         return self.size()
+
+
+def deserialize(serialized):
+    mode, hash_functions, slots, vibase, bpc = _parse_header(serialized)
+    v = VICBF(slots, hash_functions, vibase=vibase, bpc=bpc)
+    if mode == VICBF.MODE_DUMP_ALL:
+        # The rest of the serialized data contains counter values of bpc bits,
+        # in order from slot 0 to slot slots-1
+        fmt = 'uint:' + str(bpc)
+        # Read in the values and write them into the bloom filter
+        for i in range(slots):
+            v.BF[i] = serialized.read(fmt)
+    else:
+        # The rest of the serialized data contains index-counter-pairs with
+        # bpi index bits and bpc counter bits.
+        fmt_ctr = 'uint:' + str(int(bpc))
+        fmt_idx = 'uint:' + str(int(v.bpi))
+        fmt = fmt_idx + ", " + fmt_ctr
+        # read in index-counter-pairs until we run out
+        while True:
+            try:
+                idx, ctr = serialized.readlist(fmt)
+                v.BF[idx] = ctr
+            except ReadError:
+                break
+    return v
+
+
+def _parse_header(serialized):
+    """Parse the header and return the contained values.
+
+    Returns the header as a tuple: (mode, hash_functions, slots, vibase, bpc)
+    """
+    return serialized.readlist('uint:1, uint:3, uint:32, uint:4, uint:4')

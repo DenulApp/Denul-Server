@@ -13,6 +13,7 @@ import socket
 import ssl
 import struct
 import sys
+import zlib
 
 from messages.c2s_pb2 import ClientHello, ServerHello
 from messages.metaMessage_pb2 import Wrapper
@@ -20,6 +21,23 @@ from messages.metaMessage_pb2 import Wrapper
 from storage.sqlite import SqliteBackend
 
 from vicbf.vicbf import VICBF
+
+
+class Cache():
+    def __init__(self):
+        self.vicbfcache = None
+
+    def getVicbfCache(self):
+        if self.vicbfcache is not None:
+            return self.vicbfcache
+        else:
+            serialized = VicbfBackend.serialize().tobytes()
+            self.vicbfcache = zlib.compress(serialized, 6)
+            return self.vicbfcache
+
+    def invalidateVicbf(self):
+        self.vicbfcache = None
+
 
 HOST = "0.0.0.0"
 PORT = 5566
@@ -29,6 +47,7 @@ DEBUG = True
 DatabaseBackend = None
 
 VicbfBackend = None
+VicbfCache = Cache()
 
 THRESH_UP = None
 
@@ -79,6 +98,15 @@ def prettyPrintProtobuf(msg, sock):
     pass  # TODO Reimplement
 
 
+### Helper function for the VICBF
+def getVicbfSerialization():
+    return VicbfCache.getVicbfCache()
+
+
+def invalidateVicbfSerializationCache():
+    VicbfCache.invalidateVicbf()
+
+
 ##### Message Creation Functions
 # Example function:
 # def getSessionMessage(code_tuple):
@@ -102,7 +130,7 @@ def HandleClientHelloMessage(msg, sock):
     if msg.clientProto == "1.0":
         debug("Valid clientProto received")
         rv.opcode = ServerHello.CLIENT_HELLO_OK
-        rv.data = b'0'  # TODO Put VICBF here
+        rv.data = getVicbfSerialization()
     else:
         debug("WARN: Invalid clientProto received")
         rv.opcode = ServerHello.CLIENT_HELLO_PROTO_NOT_SUPPORTED
@@ -163,10 +191,17 @@ if __name__ == "__main__":
     # a new, larger VICBF to accomodate further entries
     THRESH_UP = expected_entries * 2
     # Initialize the VICBF with the given values
-    VicbfBackend = VICBF(slots, expected_entries, 3)
+    VicbfBackend = VICBF(slots, 3)
     # Insert all existing keys into the VICBF
     for key in DatabaseBackend.all_keys():
         VicbfBackend += key
+    # Since nothing time-critical is happening right now, we can take the time
+    # to populate the VICBF serialization cache. It is guaranteed to be needed
+    # at least once before becoming outdated, as it will be accessed on every
+    # new connection. The following call will request the VICBF serialization,
+    # which will be cached, and ignore the result.
+    print "Populate cache"
+    getVicbfSerialization()
 
     print "Denul server started on port " + str(PORT)
 

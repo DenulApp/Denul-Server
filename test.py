@@ -3,11 +3,12 @@
 import socket
 import struct
 import ssl
-
-from os import urandom
+import zlib
+from bitstring import ConstBitStream
 
 from messages.c2s_pb2 import ClientHello, ServerHello
 from messages.metaMessage_pb2 import Wrapper
+from vicbf.vicbf import VICBF, deserialize
 
 
 def printMsg(msg):
@@ -64,21 +65,34 @@ def getClientHelloMessage(version="1.0"):
     wrapper.ClientHello.MergeFrom(ch)
     return wrapper
 
-### ClientHello Test
-sock1 = getSocket()
-printMsg('Testing valid ClientHello...')
-msg = getClientHelloMessage()
-reply = transceive(msg, sock1)
-assert reply.WhichOneof('message') == 'ServerHello'
-assert reply.ServerHello.opcode == ServerHello.CLIENT_HELLO_OK
-assert reply.ServerHello.serverProto == "1.0"
-print "[OK]"
 
-printMsg('Testing invalid ClientHello...')
-msg = getClientHelloMessage(version="2.0")
-reply = transceive(msg, sock1)
-assert reply.WhichOneof('message') == 'ServerHello'
-assert reply.ServerHello.opcode == ServerHello.CLIENT_HELLO_PROTO_NOT_SUPPORTED
-assert reply.ServerHello.serverProto == "1.0"
-print "[OK]"
-sock1.close()
+##### Test Suite
+### ClientHello Test
+def test_ClientHello():
+    # This test sends a valid ClientHello and ensures that the reply is valid
+    # and contains a valid compressed VICBF
+    sock1 = getSocket()
+    msg = getClientHelloMessage()
+    reply = transceive(msg, sock1)
+    assert reply.WhichOneof('message') == 'ServerHello'
+    assert reply.ServerHello.opcode == ServerHello.CLIENT_HELLO_OK
+    assert reply.ServerHello.serverProto == "1.0"
+    assert reply.ServerHello.data != b'0'
+    decomp = zlib.decompress(reply.ServerHello.data)
+    bs = ConstBitStream(bytes=decomp)
+    deserialize(bs)
+    sock1.close()
+
+
+def test_ClientHello_invalid():
+    # This test sends in invalid ClientHello and ensures that the reply is an
+    # error message
+    sock1 = getSocket()
+    msg = getClientHelloMessage(version="2.0")
+    reply = transceive(msg, sock1)
+    assert reply.WhichOneof('message') == 'ServerHello'
+    assert reply.ServerHello.opcode == \
+        ServerHello.CLIENT_HELLO_PROTO_NOT_SUPPORTED
+    assert reply.ServerHello.serverProto == "1.0"
+    assert reply.ServerHello.data == b'0'
+    sock1.close()
