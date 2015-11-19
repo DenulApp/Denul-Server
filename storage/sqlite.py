@@ -86,6 +86,30 @@ class SqliteBackend():
         # Return the result (will be None if the key has no associated value)
         return c.fetchone()
 
+    def delete_kv(self, key):
+        """Delete the key-value-pair associated with the provided key
+
+        Keyword arguments:
+        key -- The key that should be deleted
+
+        Returns True if the pair has been deleted, False if no such pair
+        existed.
+        """
+        # Check if the key exists
+        if self.query_kv(key) is None:
+            return False
+
+        # Get a cursor
+        c = self.conn.cursor()
+
+        # Perform deletion
+        c.execute("DELETE FROM kv WHERE key = ?", (key, ))
+        # Commit transaction
+        self.conn.commit()
+
+        # Return success
+        return True
+
     def all_keys(self):
         """Read all keys from the database and return them as a list."""
         # Get a cursor
