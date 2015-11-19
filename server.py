@@ -11,16 +11,16 @@
 import select
 import socket
 import ssl
+import string
 import struct
 import sys
 import zlib
 
-from messages.c2s_pb2 import ServerHello, StoreReply
+from messages.c2s_pb2 import ServerHello, StoreReply, DeleteReply
 from messages.metaMessage_pb2 import Wrapper
-
 from storage.sqlite import SqliteBackend
-
 from vicbf.vicbf import VICBF
+from hashlib import sha256
 
 
 class Cache():
@@ -116,7 +116,7 @@ def invalidateVicbfSerializationCache():
 
 ### Format checker helper functions
 def keyFormatValid(key):
-    return True
+    return len(key) == 64 and all(c in string.hexdigits for c in key)
 
 
 ##### Message Creation Functions
@@ -195,6 +195,51 @@ def HandleStoreMessage(msg, sock):
     return wrapper
 
 
+def HandleDeleteMessage(msg, sock):
+    # Prepare DeleteReply message
+    rv = DeleteReply()
+    # Set the key
+    rv.key = msg.key
+    # Check if the key format is okay
+    if keyFormatValid(msg.key):
+        debug("Key format valid")
+        # Check if the key is on the server
+        if msg.key in VicbfBackend:
+            debug("Key in VICBF")
+            # Check if the auth hashes to the key
+            if sha256(msg.auth).hexdigest() == msg.key:
+                debug("Authenticator good")
+                # Delete the KV pair
+                DatabaseBackend.delete_kv(msg.key)
+                debug("Deleted from DB backend")
+                # Delete the key from the VICBF
+                VicbfBackend.remove(msg.key)
+                debug("Deleted from VICBF")
+                # Invalidate VICBF cache
+                invalidateVicbfSerializationCache()
+                # Set opcode to success
+                rv.opcode = DeleteReply.DELETE_OK
+                debug("Deleted kv pair")
+            else:
+                debug("WARN: Bad authenticator")
+                # Authentication string does not hash to key
+                rv.opcode = DeleteReply.DELETE_FAIL_AUTH
+        else:
+            debug("WARN: Key not found")
+            # Key has not been stored on the server
+            rv.opcode = DeleteReply.DELETE_FAIL_NOT_FOUND
+    else:
+        debug("WARN: Bad key format")
+        # Key is in bad format
+        rv.opcode = DeleteReply.DELETE_FAIL_KEY_FMT
+    # Create wrapper message
+    wrapper = Wrapper()
+    # Merge DeleteReply into it
+    wrapper.DeleteReply.MergeFrom(rv)
+    # Return reply
+    return wrapper
+
+
 # Handler for all incoming messages
 def HandleMessage(message, sock):
     mtype = message.WhichOneof('message')
@@ -204,6 +249,9 @@ def HandleMessage(message, sock):
     elif mtype == "Store":
         debug("Received Store")
         return HandleStoreMessage(message.Store, sock)
+    elif mtype == "Delete":
+        debug("Received Delete")
+        return HandleDeleteMessage(message.Delete, sock)
     # and so on
 
 
@@ -304,7 +352,7 @@ if __name__ == "__main__":
 
                     # client disconnected, so remove from socket list
                     except Exception, e:
-                        print "Client (%s, %s) is offline" % addr
+                        print "Client (%s, %s) is offline: %s" % (addr[0], addr[1], e)
                         sock.close()
                         CONNECTION_LIST.remove(sock)
                         continue
