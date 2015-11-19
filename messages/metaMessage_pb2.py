@@ -19,7 +19,7 @@ import c2s_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='metaMessage.proto',
   package='de.velcommuta.denul.network.meta',
-  serialized_pb=_b('\n\x11metaMessage.proto\x12 de.velcommuta.denul.network.meta\x1a\tc2s.proto\"\x8e\x03\n\x07Wrapper\x12\x43\n\x0b\x43lientHello\x18\x01 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.ClientHelloH\x00\x12\x43\n\x0bServerHello\x18\x02 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.ServerHelloH\x00\x12\x37\n\x05Store\x18\x03 \x01(\x0b\x32&.de.velcommuta.denul.network.c2s.StoreH\x00\x12\x41\n\nStoreReply\x18\x04 \x01(\x0b\x32+.de.velcommuta.denul.network.c2s.StoreReplyH\x00\x12\x33\n\x03Get\x18\x05 \x01(\x0b\x32$.de.velcommuta.denul.network.c2s.GetH\x00\x12=\n\x08GetReply\x18\x06 \x01(\x0b\x32).de.velcommuta.denul.network.c2s.GetReplyH\x00\x42\t\n\x07message')
+  serialized_pb=_b('\n\x11metaMessage.proto\x12 de.velcommuta.denul.network.meta\x1a\tc2s.proto\"\x8e\x04\n\x07Wrapper\x12\x43\n\x0b\x43lientHello\x18\x01 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.ClientHelloH\x00\x12\x43\n\x0bServerHello\x18\x02 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.ServerHelloH\x00\x12\x37\n\x05Store\x18\x03 \x01(\x0b\x32&.de.velcommuta.denul.network.c2s.StoreH\x00\x12\x41\n\nStoreReply\x18\x04 \x01(\x0b\x32+.de.velcommuta.denul.network.c2s.StoreReplyH\x00\x12\x33\n\x03Get\x18\x05 \x01(\x0b\x32$.de.velcommuta.denul.network.c2s.GetH\x00\x12=\n\x08GetReply\x18\x06 \x01(\x0b\x32).de.velcommuta.denul.network.c2s.GetReplyH\x00\x12\x39\n\x06\x44\x65lete\x18\x07 \x01(\x0b\x32\'.de.velcommuta.denul.network.c2s.DeleteH\x00\x12\x43\n\x0b\x44\x65leteReply\x18\x08 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.DeleteReplyH\x00\x42\t\n\x07message')
   ,
   dependencies=[c2s_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -76,6 +76,20 @@ _WRAPPER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='Delete', full_name='de.velcommuta.denul.network.meta.Wrapper.Delete', index=6,
+      number=7, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='DeleteReply', full_name='de.velcommuta.denul.network.meta.Wrapper.DeleteReply', index=7,
+      number=8, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -91,7 +105,7 @@ _WRAPPER = _descriptor.Descriptor(
       index=0, containing_type=None, fields=[]),
   ],
   serialized_start=67,
-  serialized_end=465,
+  serialized_end=593,
 )
 
 _WRAPPER.fields_by_name['ClientHello'].message_type = c2s_pb2._CLIENTHELLO
@@ -100,6 +114,8 @@ _WRAPPER.fields_by_name['Store'].message_type = c2s_pb2._STORE
 _WRAPPER.fields_by_name['StoreReply'].message_type = c2s_pb2._STOREREPLY
 _WRAPPER.fields_by_name['Get'].message_type = c2s_pb2._GET
 _WRAPPER.fields_by_name['GetReply'].message_type = c2s_pb2._GETREPLY
+_WRAPPER.fields_by_name['Delete'].message_type = c2s_pb2._DELETE
+_WRAPPER.fields_by_name['DeleteReply'].message_type = c2s_pb2._DELETEREPLY
 _WRAPPER.oneofs_by_name['message'].fields.append(
   _WRAPPER.fields_by_name['ClientHello'])
 _WRAPPER.fields_by_name['ClientHello'].containing_oneof = _WRAPPER.oneofs_by_name['message']
@@ -118,6 +134,12 @@ _WRAPPER.fields_by_name['Get'].containing_oneof = _WRAPPER.oneofs_by_name['messa
 _WRAPPER.oneofs_by_name['message'].fields.append(
   _WRAPPER.fields_by_name['GetReply'])
 _WRAPPER.fields_by_name['GetReply'].containing_oneof = _WRAPPER.oneofs_by_name['message']
+_WRAPPER.oneofs_by_name['message'].fields.append(
+  _WRAPPER.fields_by_name['Delete'])
+_WRAPPER.fields_by_name['Delete'].containing_oneof = _WRAPPER.oneofs_by_name['message']
+_WRAPPER.oneofs_by_name['message'].fields.append(
+  _WRAPPER.fields_by_name['DeleteReply'])
+_WRAPPER.fields_by_name['DeleteReply'].containing_oneof = _WRAPPER.oneofs_by_name['message']
 DESCRIPTOR.message_types_by_name['Wrapper'] = _WRAPPER
 
 Wrapper = _reflection.GeneratedProtocolMessageType('Wrapper', (_message.Message,), dict(
