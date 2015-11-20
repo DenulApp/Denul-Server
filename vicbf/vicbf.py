@@ -89,6 +89,7 @@ class VICBF():
         """
         if key is None:
             raise ValueError("Key cannot be None")
+        ops = []
         for i in range(self.hash_functions):
             # Compute the slot and increment values
             slot_index, decrement = self._calculate_slot_and_increment(key, i)
@@ -105,16 +106,29 @@ class VICBF():
                     raise ValueError("Trying to remove entry not in VICBF")
                 elif self.BF[slot_index] - decrement == 0:
                     # After the decrement, the counter is zero. Remove the
-                    # entry from the hashtable to save space
-                    del self.BF[slot_index]
+                    # entry from the hashtable to save space.
+                    # We have to defer this operation, because it is not yet
+                    # clear if the key is actually in the bloom filter. Thus,
+                    # the operation will only be executed if no error occurs
+                    # later in the processing
+                    ops += [('del', slot_index, 0)]
                 else:
                     # After the decrement, the counter will still be positive.
                     # Perform the decrement
-                    self.BF[slot_index] -= decrement
+                    # We have to defer this operation, because it is not yet
+                    # clear if the key is actually in the bloom filter. Thus,
+                    # the operation will only be executed if no error occurs
+                    # later in the processing
+                    ops += [('decr', slot_index, decrement)]
             except KeyError:
                 # A KeyError should not occur if the item is in the VICBF, so
                 # this indicates incorrect usage. Raise an exception
                 raise ValueError("Trying to remove entry not in VICBF")
+        for op, idx, decr in ops:
+            if op == 'del':
+                del self.BF[idx]
+            elif op == 'decr':
+                self.BF[idx] -= decr
         self.entries -= 1
 
     def query(self, key):
@@ -221,7 +235,8 @@ class VICBF():
                 print "generator"
                 fmt = "<" + str(self.slots) + "B"
                 generator = BFGenerator()
-                serialized.append(pack(fmt, *generator))
+                # serialized.append(pack(fmt, *generator))
+                serialized.append(bytearray(generator))
                 # for i in generator:
                 #     pass
             else:
@@ -334,6 +349,7 @@ class VICBF():
 
 
 def deserialize(serialized):
+    print "Deserialization"
     mode, hash_functions, slots, vibase, bpc = _parse_header(serialized)
     v = VICBF(slots, hash_functions, vibase=vibase, bpc=bpc)
     if mode == VICBF.MODE_DUMP_ALL:
