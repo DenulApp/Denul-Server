@@ -274,10 +274,11 @@ class VICBF():
         # - 32 bit slot count indicator
         # - 4 bit vibase indicator
         # - 4 bit counter size indicator
-        header = pack('uint:1, uint:3, uint:32, uint:4, uint:4',
+        header = pack('uint:1, uint:3, uint:32, uint:32, uint:4, uint:4',
                       mode,
                       self.hash_functions,
                       self.slots,
+                      self.entries,
                       self.L,
                       self.bpc)
         return header
@@ -349,35 +350,37 @@ class VICBF():
 
 
 def deserialize(serialized):
-    print "Deserialization"
-    mode, hash_functions, slots, vibase, bpc = _parse_header(serialized)
-    v = VICBF(slots, hash_functions, vibase=vibase, bpc=bpc)
+    mode, hash_functions, slots, size, vibase, bpc = _parse_header(serialized)
+    deser = VICBF(slots, hash_functions, vibase=vibase, bpc=bpc)
+    print deser.size()
+    deser.entries = size
+    print deser.size()
     if mode == VICBF.MODE_DUMP_ALL:
         # The rest of the serialized data contains counter values of bpc bits,
         # in order from slot 0 to slot slots-1
         fmt = 'uint:' + str(bpc)
         # Read in the values and write them into the bloom filter
         for i in range(slots):
-            v.BF[i] = serialized.read(fmt)
+            deser.BF[i] = serialized.read(fmt)
     else:
         # The rest of the serialized data contains index-counter-pairs with
         # bpi index bits and bpc counter bits.
         fmt_ctr = 'uint:' + str(int(bpc))
-        fmt_idx = 'uint:' + str(int(v.bpi))
+        fmt_idx = 'uint:' + str(int(deser.bpi))
         fmt = fmt_idx + ", " + fmt_ctr
         # read in index-counter-pairs until we run out
         while True:
             try:
                 idx, ctr = serialized.readlist(fmt)
-                v.BF[idx] = ctr
+                deser.BF[idx] = ctr
             except ReadError:
                 break
-    return v
+    return deser
 
 
 def _parse_header(serialized):
     """Parse the header and return the contained values.
 
-    Returns the header as a tuple: (mode, hash_functions, slots, vibase, bpc)
+    Returns the header as (mode, hash_functions, slots, size, vibase, bpc)
     """
-    return serialized.readlist('uint:1, uint:3, uint:32, uint:4, uint:4')
+    return serialized.readlist('uint:1, uint:3, uint:32, uint:32, uint:4, uint:4')

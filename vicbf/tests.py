@@ -211,12 +211,32 @@ def test_len():
     assert len(v) == 0
 
 
+def test_vicbf_independence():
+    v1 = VICBF(10000, 3)
+    v2 = VICBF(10000, 3)
+    v1 += 123
+    assert 123 not in v2
+
+
+def test_serialization_independence():
+    v = VICBF(10000, 3)
+    for i in range(10):
+        v += i
+    ser = v.serialize()
+    for i in range(10):
+        v -= i
+    des = deserialize(ser)
+    for i in range(10):
+        assert i in des
+
+
 def test_serialization_dumpall():
     v = VICBF(10000, 3)
     for i in range(5000):
         v += i
     ser = v.serialize()
     v2 = deserialize(ser)
+    assert v.size() == v2.size()
     for i in range(5000):
         assert i in v2
 
@@ -227,6 +247,7 @@ def test_serialization_dumpselective():
     v += 126
     ser = v.serialize()
     v2 = deserialize(ser)
+    assert v.size() == v2.size()
     assert 123 in v2
     assert 126 in v2
     assert 124 not in v2
@@ -238,6 +259,7 @@ def test_serialization_dumpall_bpc7():
         v += i
     ser = v.serialize()
     v2 = deserialize(ser)
+    assert v.size() == v2.size()
     for i in range(5000):
         assert i in v2
 
@@ -260,4 +282,4 @@ def test_deletion_regression():
     assert 771 in v
 
 
-test_serialization_dumpall_bpc7()
+# test_serialization_dumpall_bpc7()
