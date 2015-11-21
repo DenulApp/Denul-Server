@@ -58,7 +58,7 @@ class VICBF():
         # Number of bits per counter
         self.bpc = bpc
         # Number of bits per counter index - will be used during serialization
-        self.bpi = ceil(log(self.slots, 2))
+        self.bpi = ceil(log(self.slots, 2) / 8) * 8
 
     def insert(self, key):
         """Insert a value into the bloom filter
@@ -215,31 +215,21 @@ class VICBF():
             # Get the header of the serialized data
             serialized = self._build_header(self.MODE_DUMP_ALL)
             # Determine the format it will be serialized in
-            # if self.bpc == 8:
-            #     def lookup(key):
-            #         try:
-            #             return self.BF[key]
-            #         except:
-            #             return 0
-            #     print "efficient"
-            #     fmt = "<" + str(self.slots) + "B"
-            #     args = [lookup(key) for key in range(self.slots)]
-            #     serialized.append(pack(fmt, *args))
             if self.bpc == 8:
+                # We are using 8-bit counters. This means that we can serialize
+                # the counters as 8-bit unsigned integers, which is much more
+                # efficient than the alternative below.
                 def BFGenerator():
                     for i in range(self.slots):
                         try:
                             yield self.BF[i]
                         except KeyError:
                             yield 0
-                print "generator"
-                fmt = "<" + str(self.slots) + "B"
                 generator = BFGenerator()
-                # serialized.append(pack(fmt, *generator))
                 serialized.append(bytearray(generator))
-                # for i in generator:
-                #     pass
             else:
+                # We are not using 8-bit counters - use the slow method to
+                # serialize the data
                 fmt = 'uint:' + str(self.bpc)
                 # Start serializing
                 for slot in range(self.slots):
@@ -274,7 +264,7 @@ class VICBF():
         # - 32 bit slot count indicator
         # - 4 bit vibase indicator
         # - 4 bit counter size indicator
-        header = pack('uint:1, uint:3, uint:32, uint:32, uint:4, uint:4',
+        header = pack('uint:1, uint:7, uint:32, uint:32, uint:4, uint:4',
                       mode,
                       self.hash_functions,
                       self.slots,
@@ -352,9 +342,7 @@ class VICBF():
 def deserialize(serialized):
     mode, hash_functions, slots, size, vibase, bpc = _parse_header(serialized)
     deser = VICBF(slots, hash_functions, vibase=vibase, bpc=bpc)
-    print deser.size()
     deser.entries = size
-    print deser.size()
     if mode == VICBF.MODE_DUMP_ALL:
         # The rest of the serialized data contains counter values of bpc bits,
         # in order from slot 0 to slot slots-1
@@ -383,4 +371,4 @@ def _parse_header(serialized):
 
     Returns the header as (mode, hash_functions, slots, size, vibase, bpc)
     """
-    return serialized.readlist('uint:1, uint:3, uint:32, uint:32, uint:4, uint:4')
+    return serialized.readlist('uint:1, uint:7, uint:32, uint:32, uint:4, uint:4')
