@@ -17,8 +17,8 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='c2s.proto',
-  package='de.velcommuta.denul.network.c2s',
-  serialized_pb=_b('\n\tc2s.proto\x12\x1f\x64\x65.velcommuta.denul.network.c2s\"#\n\x05Store\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\r\n\x05value\x18\x02 \x02(\x0c\"\xcf\x01\n\nStoreReply\x12J\n\x06opcode\x18\x01 \x02(\x0e\x32:.de.velcommuta.denul.network.c2s.StoreReply.StoreReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"h\n\x0eStoreReplyCode\x12\x0c\n\x08STORE_OK\x10\x00\x12\x18\n\x14STORE_FAIL_KEY_TAKEN\x10\x01\x12\x16\n\x12STORE_FAIL_KEY_FMT\x10\x02\x12\x16\n\x12STORE_FAIL_UNKNOWN\x10\x03\"\x12\n\x03Get\x12\x0b\n\x03key\x18\x01 \x02(\t\"\xd0\x01\n\x08GetReply\x12\x46\n\x06opcode\x18\x01 \x02(\x0e\x32\x36.de.velcommuta.denul.network.c2s.GetReply.GetReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\x12\r\n\x05value\x18\x03 \x01(\x0c\"`\n\x0cGetReplyCode\x12\n\n\x06GET_OK\x10\x00\x12\x14\n\x10GET_FAIL_KEY_FMT\x10\x01\x12\x18\n\x14GET_FAIL_UNKNOWN_KEY\x10\x02\x12\x14\n\x10GET_FAIL_UNKNOWN\x10\x03\"#\n\x06\x44\x65lete\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x0c\n\x04\x61uth\x18\x02 \x02(\t\"\xee\x01\n\x0b\x44\x65leteReply\x12L\n\x06opcode\x18\x01 \x02(\x0e\x32<.de.velcommuta.denul.network.c2s.DeleteReply.DeleteReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"\x83\x01\n\x0f\x44\x65leteReplyCode\x12\r\n\tDELETE_OK\x10\x00\x12\x14\n\x10\x44\x45LETE_FAIL_AUTH\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_NOT_FOUND\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_KEY_FMT\x10\x03\x12\x17\n\x13\x44\x45LETE_FAIL_UNKNOWN\x10\x04\"0\n\x0b\x43lientHello\x12\x13\n\x0b\x63lientProto\x18\x01 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\xd6\x01\n\x0bServerHello\x12Q\n\x06opcode\x18\x01 \x02(\x0e\x32\x41.de.velcommuta.denul.network.c2s.ServerHello.ClientHelloReplyCode\x12\x13\n\x0bserverProto\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x02(\x0c\"Q\n\x14\x43lientHelloReplyCode\x12\x13\n\x0f\x43LIENT_HELLO_OK\x10\x00\x12$\n CLIENT_HELLO_PROTO_NOT_SUPPORTED\x10\x01')
+  package='de.velcommuta.denul.networking.protobuf.c2s',
+  serialized_pb=_b('\n\tc2s.proto\x12+de.velcommuta.denul.networking.protobuf.c2s\"#\n\x05Store\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\r\n\x05value\x18\x02 \x02(\x0c\"\xdb\x01\n\nStoreReply\x12V\n\x06opcode\x18\x01 \x02(\x0e\x32\x46.de.velcommuta.denul.networking.protobuf.c2s.StoreReply.StoreReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"h\n\x0eStoreReplyCode\x12\x0c\n\x08STORE_OK\x10\x00\x12\x18\n\x14STORE_FAIL_KEY_TAKEN\x10\x01\x12\x16\n\x12STORE_FAIL_KEY_FMT\x10\x02\x12\x16\n\x12STORE_FAIL_UNKNOWN\x10\x03\"\x12\n\x03Get\x12\x0b\n\x03key\x18\x01 \x02(\t\"\xdc\x01\n\x08GetReply\x12R\n\x06opcode\x18\x01 \x02(\x0e\x32\x42.de.velcommuta.denul.networking.protobuf.c2s.GetReply.GetReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\x12\r\n\x05value\x18\x03 \x01(\x0c\"`\n\x0cGetReplyCode\x12\n\n\x06GET_OK\x10\x00\x12\x14\n\x10GET_FAIL_KEY_FMT\x10\x01\x12\x18\n\x14GET_FAIL_UNKNOWN_KEY\x10\x02\x12\x14\n\x10GET_FAIL_UNKNOWN\x10\x03\"#\n\x06\x44\x65lete\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x0c\n\x04\x61uth\x18\x02 \x02(\t\"\xfa\x01\n\x0b\x44\x65leteReply\x12X\n\x06opcode\x18\x01 \x02(\x0e\x32H.de.velcommuta.denul.networking.protobuf.c2s.DeleteReply.DeleteReplyCode\x12\x0b\n\x03key\x18\x02 \x02(\t\"\x83\x01\n\x0f\x44\x65leteReplyCode\x12\r\n\tDELETE_OK\x10\x00\x12\x14\n\x10\x44\x45LETE_FAIL_AUTH\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_NOT_FOUND\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_KEY_FMT\x10\x03\x12\x17\n\x13\x44\x45LETE_FAIL_UNKNOWN\x10\x04\"0\n\x0b\x43lientHello\x12\x13\n\x0b\x63lientProto\x18\x01 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\xe2\x01\n\x0bServerHello\x12]\n\x06opcode\x18\x01 \x02(\x0e\x32M.de.velcommuta.denul.networking.protobuf.c2s.ServerHello.ClientHelloReplyCode\x12\x13\n\x0bserverProto\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x02(\x0c\"Q\n\x14\x43lientHelloReplyCode\x12\x13\n\x0f\x43LIENT_HELLO_OK\x10\x00\x12$\n CLIENT_HELLO_PROTO_NOT_SUPPORTED\x10\x01')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -26,7 +26,7 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _STOREREPLY_STOREREPLYCODE = _descriptor.EnumDescriptor(
   name='StoreReplyCode',
-  full_name='de.velcommuta.denul.network.c2s.StoreReply.StoreReplyCode',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.StoreReply.StoreReplyCode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -49,14 +49,14 @@ _STOREREPLY_STOREREPLYCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=187,
-  serialized_end=291,
+  serialized_start=211,
+  serialized_end=315,
 )
 _sym_db.RegisterEnumDescriptor(_STOREREPLY_STOREREPLYCODE)
 
 _GETREPLY_GETREPLYCODE = _descriptor.EnumDescriptor(
   name='GetReplyCode',
-  full_name='de.velcommuta.denul.network.c2s.GetReply.GetReplyCode',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.GetReply.GetReplyCode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -79,14 +79,14 @@ _GETREPLY_GETREPLYCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=426,
-  serialized_end=522,
+  serialized_start=462,
+  serialized_end=558,
 )
 _sym_db.RegisterEnumDescriptor(_GETREPLY_GETREPLYCODE)
 
 _DELETEREPLY_DELETEREPLYCODE = _descriptor.EnumDescriptor(
   name='DeleteReplyCode',
-  full_name='de.velcommuta.denul.network.c2s.DeleteReply.DeleteReplyCode',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.DeleteReply.DeleteReplyCode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -113,14 +113,14 @@ _DELETEREPLY_DELETEREPLYCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=669,
-  serialized_end=800,
+  serialized_start=717,
+  serialized_end=848,
 )
 _sym_db.RegisterEnumDescriptor(_DELETEREPLY_DELETEREPLYCODE)
 
 _SERVERHELLO_CLIENTHELLOREPLYCODE = _descriptor.EnumDescriptor(
   name='ClientHelloReplyCode',
-  full_name='de.velcommuta.denul.network.c2s.ServerHello.ClientHelloReplyCode',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.ServerHello.ClientHelloReplyCode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -135,28 +135,28 @@ _SERVERHELLO_CLIENTHELLOREPLYCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=986,
-  serialized_end=1067,
+  serialized_start=1046,
+  serialized_end=1127,
 )
 _sym_db.RegisterEnumDescriptor(_SERVERHELLO_CLIENTHELLOREPLYCODE)
 
 
 _STORE = _descriptor.Descriptor(
   name='Store',
-  full_name='de.velcommuta.denul.network.c2s.Store',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.Store',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='de.velcommuta.denul.network.c2s.Store.key', index=0,
+      name='key', full_name='de.velcommuta.denul.networking.protobuf.c2s.Store.key', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='de.velcommuta.denul.network.c2s.Store.value', index=1,
+      name='value', full_name='de.velcommuta.denul.networking.protobuf.c2s.Store.value', index=1,
       number=2, type=12, cpp_type=9, label=2,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -173,27 +173,27 @@ _STORE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=46,
-  serialized_end=81,
+  serialized_start=58,
+  serialized_end=93,
 )
 
 
 _STOREREPLY = _descriptor.Descriptor(
   name='StoreReply',
-  full_name='de.velcommuta.denul.network.c2s.StoreReply',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.StoreReply',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='opcode', full_name='de.velcommuta.denul.network.c2s.StoreReply.opcode', index=0,
+      name='opcode', full_name='de.velcommuta.denul.networking.protobuf.c2s.StoreReply.opcode', index=0,
       number=1, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='key', full_name='de.velcommuta.denul.network.c2s.StoreReply.key', index=1,
+      name='key', full_name='de.velcommuta.denul.networking.protobuf.c2s.StoreReply.key', index=1,
       number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -211,20 +211,20 @@ _STOREREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=84,
-  serialized_end=291,
+  serialized_start=96,
+  serialized_end=315,
 )
 
 
 _GET = _descriptor.Descriptor(
   name='Get',
-  full_name='de.velcommuta.denul.network.c2s.Get',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.Get',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='de.velcommuta.denul.network.c2s.Get.key', index=0,
+      name='key', full_name='de.velcommuta.denul.networking.protobuf.c2s.Get.key', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -241,34 +241,34 @@ _GET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=293,
-  serialized_end=311,
+  serialized_start=317,
+  serialized_end=335,
 )
 
 
 _GETREPLY = _descriptor.Descriptor(
   name='GetReply',
-  full_name='de.velcommuta.denul.network.c2s.GetReply',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.GetReply',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='opcode', full_name='de.velcommuta.denul.network.c2s.GetReply.opcode', index=0,
+      name='opcode', full_name='de.velcommuta.denul.networking.protobuf.c2s.GetReply.opcode', index=0,
       number=1, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='key', full_name='de.velcommuta.denul.network.c2s.GetReply.key', index=1,
+      name='key', full_name='de.velcommuta.denul.networking.protobuf.c2s.GetReply.key', index=1,
       number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='de.velcommuta.denul.network.c2s.GetReply.value', index=2,
+      name='value', full_name='de.velcommuta.denul.networking.protobuf.c2s.GetReply.value', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -286,27 +286,27 @@ _GETREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=314,
-  serialized_end=522,
+  serialized_start=338,
+  serialized_end=558,
 )
 
 
 _DELETE = _descriptor.Descriptor(
   name='Delete',
-  full_name='de.velcommuta.denul.network.c2s.Delete',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.Delete',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='de.velcommuta.denul.network.c2s.Delete.key', index=0,
+      name='key', full_name='de.velcommuta.denul.networking.protobuf.c2s.Delete.key', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='auth', full_name='de.velcommuta.denul.network.c2s.Delete.auth', index=1,
+      name='auth', full_name='de.velcommuta.denul.networking.protobuf.c2s.Delete.auth', index=1,
       number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -323,27 +323,27 @@ _DELETE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=524,
-  serialized_end=559,
+  serialized_start=560,
+  serialized_end=595,
 )
 
 
 _DELETEREPLY = _descriptor.Descriptor(
   name='DeleteReply',
-  full_name='de.velcommuta.denul.network.c2s.DeleteReply',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.DeleteReply',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='opcode', full_name='de.velcommuta.denul.network.c2s.DeleteReply.opcode', index=0,
+      name='opcode', full_name='de.velcommuta.denul.networking.protobuf.c2s.DeleteReply.opcode', index=0,
       number=1, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='key', full_name='de.velcommuta.denul.network.c2s.DeleteReply.key', index=1,
+      name='key', full_name='de.velcommuta.denul.networking.protobuf.c2s.DeleteReply.key', index=1,
       number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -361,27 +361,27 @@ _DELETEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=562,
-  serialized_end=800,
+  serialized_start=598,
+  serialized_end=848,
 )
 
 
 _CLIENTHELLO = _descriptor.Descriptor(
   name='ClientHello',
-  full_name='de.velcommuta.denul.network.c2s.ClientHello',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.ClientHello',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='clientProto', full_name='de.velcommuta.denul.network.c2s.ClientHello.clientProto', index=0,
+      name='clientProto', full_name='de.velcommuta.denul.networking.protobuf.c2s.ClientHello.clientProto', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='data', full_name='de.velcommuta.denul.network.c2s.ClientHello.data', index=1,
+      name='data', full_name='de.velcommuta.denul.networking.protobuf.c2s.ClientHello.data', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -398,34 +398,34 @@ _CLIENTHELLO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=802,
-  serialized_end=850,
+  serialized_start=850,
+  serialized_end=898,
 )
 
 
 _SERVERHELLO = _descriptor.Descriptor(
   name='ServerHello',
-  full_name='de.velcommuta.denul.network.c2s.ServerHello',
+  full_name='de.velcommuta.denul.networking.protobuf.c2s.ServerHello',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='opcode', full_name='de.velcommuta.denul.network.c2s.ServerHello.opcode', index=0,
+      name='opcode', full_name='de.velcommuta.denul.networking.protobuf.c2s.ServerHello.opcode', index=0,
       number=1, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='serverProto', full_name='de.velcommuta.denul.network.c2s.ServerHello.serverProto', index=1,
+      name='serverProto', full_name='de.velcommuta.denul.networking.protobuf.c2s.ServerHello.serverProto', index=1,
       number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='data', full_name='de.velcommuta.denul.network.c2s.ServerHello.data', index=2,
+      name='data', full_name='de.velcommuta.denul.networking.protobuf.c2s.ServerHello.data', index=2,
       number=3, type=12, cpp_type=9, label=2,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -443,8 +443,8 @@ _SERVERHELLO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=853,
-  serialized_end=1067,
+  serialized_start=901,
+  serialized_end=1127,
 )
 
 _STOREREPLY.fields_by_name['opcode'].enum_type = _STOREREPLY_STOREREPLYCODE
@@ -467,56 +467,56 @@ DESCRIPTOR.message_types_by_name['ServerHello'] = _SERVERHELLO
 Store = _reflection.GeneratedProtocolMessageType('Store', (_message.Message,), dict(
   DESCRIPTOR = _STORE,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.Store)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.Store)
   ))
 _sym_db.RegisterMessage(Store)
 
 StoreReply = _reflection.GeneratedProtocolMessageType('StoreReply', (_message.Message,), dict(
   DESCRIPTOR = _STOREREPLY,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.StoreReply)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.StoreReply)
   ))
 _sym_db.RegisterMessage(StoreReply)
 
 Get = _reflection.GeneratedProtocolMessageType('Get', (_message.Message,), dict(
   DESCRIPTOR = _GET,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.Get)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.Get)
   ))
 _sym_db.RegisterMessage(Get)
 
 GetReply = _reflection.GeneratedProtocolMessageType('GetReply', (_message.Message,), dict(
   DESCRIPTOR = _GETREPLY,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.GetReply)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.GetReply)
   ))
 _sym_db.RegisterMessage(GetReply)
 
 Delete = _reflection.GeneratedProtocolMessageType('Delete', (_message.Message,), dict(
   DESCRIPTOR = _DELETE,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.Delete)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.Delete)
   ))
 _sym_db.RegisterMessage(Delete)
 
 DeleteReply = _reflection.GeneratedProtocolMessageType('DeleteReply', (_message.Message,), dict(
   DESCRIPTOR = _DELETEREPLY,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.DeleteReply)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.DeleteReply)
   ))
 _sym_db.RegisterMessage(DeleteReply)
 
 ClientHello = _reflection.GeneratedProtocolMessageType('ClientHello', (_message.Message,), dict(
   DESCRIPTOR = _CLIENTHELLO,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.ClientHello)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.ClientHello)
   ))
 _sym_db.RegisterMessage(ClientHello)
 
 ServerHello = _reflection.GeneratedProtocolMessageType('ServerHello', (_message.Message,), dict(
   DESCRIPTOR = _SERVERHELLO,
   __module__ = 'c2s_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.c2s.ServerHello)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.c2s.ServerHello)
   ))
 _sym_db.RegisterMessage(ServerHello)
 

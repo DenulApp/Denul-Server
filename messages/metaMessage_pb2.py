@@ -18,8 +18,8 @@ import c2s_pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='metaMessage.proto',
-  package='de.velcommuta.denul.network.meta',
-  serialized_pb=_b('\n\x11metaMessage.proto\x12 de.velcommuta.denul.network.meta\x1a\tc2s.proto\"\x8e\x04\n\x07Wrapper\x12\x43\n\x0b\x43lientHello\x18\x01 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.ClientHelloH\x00\x12\x43\n\x0bServerHello\x18\x02 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.ServerHelloH\x00\x12\x37\n\x05Store\x18\x03 \x01(\x0b\x32&.de.velcommuta.denul.network.c2s.StoreH\x00\x12\x41\n\nStoreReply\x18\x04 \x01(\x0b\x32+.de.velcommuta.denul.network.c2s.StoreReplyH\x00\x12\x33\n\x03Get\x18\x05 \x01(\x0b\x32$.de.velcommuta.denul.network.c2s.GetH\x00\x12=\n\x08GetReply\x18\x06 \x01(\x0b\x32).de.velcommuta.denul.network.c2s.GetReplyH\x00\x12\x39\n\x06\x44\x65lete\x18\x07 \x01(\x0b\x32\'.de.velcommuta.denul.network.c2s.DeleteH\x00\x12\x43\n\x0b\x44\x65leteReply\x18\x08 \x01(\x0b\x32,.de.velcommuta.denul.network.c2s.DeleteReplyH\x00\x42\t\n\x07message')
+  package='de.velcommuta.denul.networking.protobuf.meta',
+  serialized_pb=_b('\n\x11metaMessage.proto\x12,de.velcommuta.denul.networking.protobuf.meta\x1a\tc2s.proto\"\xee\x04\n\x07Wrapper\x12O\n\x0b\x43lientHello\x18\x01 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.ClientHelloH\x00\x12O\n\x0bServerHello\x18\x02 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.ServerHelloH\x00\x12\x43\n\x05Store\x18\x03 \x01(\x0b\x32\x32.de.velcommuta.denul.networking.protobuf.c2s.StoreH\x00\x12M\n\nStoreReply\x18\x04 \x01(\x0b\x32\x37.de.velcommuta.denul.networking.protobuf.c2s.StoreReplyH\x00\x12?\n\x03Get\x18\x05 \x01(\x0b\x32\x30.de.velcommuta.denul.networking.protobuf.c2s.GetH\x00\x12I\n\x08GetReply\x18\x06 \x01(\x0b\x32\x35.de.velcommuta.denul.networking.protobuf.c2s.GetReplyH\x00\x12\x45\n\x06\x44\x65lete\x18\x07 \x01(\x0b\x32\x33.de.velcommuta.denul.networking.protobuf.c2s.DeleteH\x00\x12O\n\x0b\x44\x65leteReply\x18\x08 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.DeleteReplyH\x00\x42\t\n\x07message')
   ,
   dependencies=[c2s_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -29,62 +29,62 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _WRAPPER = _descriptor.Descriptor(
   name='Wrapper',
-  full_name='de.velcommuta.denul.network.meta.Wrapper',
+  full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ClientHello', full_name='de.velcommuta.denul.network.meta.Wrapper.ClientHello', index=0,
+      name='ClientHello', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.ClientHello', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='ServerHello', full_name='de.velcommuta.denul.network.meta.Wrapper.ServerHello', index=1,
+      name='ServerHello', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.ServerHello', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Store', full_name='de.velcommuta.denul.network.meta.Wrapper.Store', index=2,
+      name='Store', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.Store', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='StoreReply', full_name='de.velcommuta.denul.network.meta.Wrapper.StoreReply', index=3,
+      name='StoreReply', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.StoreReply', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Get', full_name='de.velcommuta.denul.network.meta.Wrapper.Get', index=4,
+      name='Get', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.Get', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='GetReply', full_name='de.velcommuta.denul.network.meta.Wrapper.GetReply', index=5,
+      name='GetReply', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.GetReply', index=5,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Delete', full_name='de.velcommuta.denul.network.meta.Wrapper.Delete', index=6,
+      name='Delete', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.Delete', index=6,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='DeleteReply', full_name='de.velcommuta.denul.network.meta.Wrapper.DeleteReply', index=7,
+      name='DeleteReply', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.DeleteReply', index=7,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -101,11 +101,11 @@ _WRAPPER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='message', full_name='de.velcommuta.denul.network.meta.Wrapper.message',
+      name='message', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.message',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=67,
-  serialized_end=593,
+  serialized_start=79,
+  serialized_end=701,
 )
 
 _WRAPPER.fields_by_name['ClientHello'].message_type = c2s_pb2._CLIENTHELLO
@@ -145,7 +145,7 @@ DESCRIPTOR.message_types_by_name['Wrapper'] = _WRAPPER
 Wrapper = _reflection.GeneratedProtocolMessageType('Wrapper', (_message.Message,), dict(
   DESCRIPTOR = _WRAPPER,
   __module__ = 'metaMessage_pb2'
-  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.network.meta.Wrapper)
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.meta.Wrapper)
   ))
 _sym_db.RegisterMessage(Wrapper)
 
