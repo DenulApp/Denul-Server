@@ -207,7 +207,7 @@ def HandleDeleteMessage(msg, sock):
         if msg.key in VicbfBackend:
             debug("Key in VICBF")
             # Check if the auth hashes to the key
-            if sha256(msg.auth).hexdigest() == msg.key:
+            if sha256(msg.auth).hexdigest().upper() == msg.key.upper():
                 debug("Authenticator good")
                 # Delete the KV pair
                 DatabaseBackend.delete_kv(msg.key)
