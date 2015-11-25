@@ -65,7 +65,7 @@ class SqliteBackend():
             raise KeyError("Key already in use")
 
         # Perform the insertion
-        c.execute("INSERT INTO kv VALUES (?, ?)", (key, value))
+        c.execute("INSERT INTO kv VALUES (?, ?)", (key, sqlite3.Binary(value)))
         # Commit transaction
         self.conn.commit()
 
