@@ -275,6 +275,8 @@ class VICBF():
 
     def _calculate_slot_and_increment(self, key, i):
         """Helper function to calculate the slot and increment value"""
+        if isinstance(key, (int, long)):
+            key = "".join([chr(int(x)) for x in str(key)])
         # Get a sha1 hash of the key, combined with a running integer to
         # arrive at hash_functions different hash functions
         h = hashlib.sha1((key + chr(i))).hexdigest()
