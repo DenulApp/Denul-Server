@@ -332,7 +332,7 @@ if __name__ == "__main__":
     VicbfBackend = VICBF(slots, 3)
     # Insert all existing keys into the VICBF
     for key in DatabaseBackend.all_keys():
-        VicbfBackend += key
+        VicbfBackend += str(key[0])
     # Since nothing time-critical is happening right now, we can take the time
     # to populate the VICBF serialization cache. It is guaranteed to be needed
     # at least once before becoming outdated, as it will be accessed on every
