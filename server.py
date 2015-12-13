@@ -116,7 +116,7 @@ def invalidateVicbfSerializationCache():
 
 ### Format checker helper functions
 def keyFormatValid(key):
-    return len(key) == 64 and all(c in string.hexdigits for c in key)
+    return len(key) == 32
 
 
 ##### Message Creation Functions
@@ -207,7 +207,7 @@ def HandleDeleteMessage(msg, sock):
         if msg.key in VicbfBackend:
             debug("Key in VICBF")
             # Check if the auth hashes to the key
-            if sha256(msg.auth).hexdigest().upper() == msg.key.upper():
+            if sha256(msg.auth).digest() == msg.key:
                 debug("Authenticator good")
                 # Delete the KV pair
                 DatabaseBackend.delete_kv(msg.key)
