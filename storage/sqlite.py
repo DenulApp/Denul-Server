@@ -42,7 +42,7 @@ class SqliteBackend():
         c = self.conn.cursor()
 
         # Create table for key-value-pairs
-        c.execute("CREATE TABLE kv (key text, value blob)")
+        c.execute("CREATE TABLE kv (key blob, value blob)")
         # Set the user_version pragma to indicate the version of the DB layout
         c.execute("PRAGMA user_version = 1")
 
@@ -60,12 +60,12 @@ class SqliteBackend():
         c = self.conn.cursor()
 
         # Check if something already exists under that key
-        c.execute("SELECT * FROM kv WHERE key = ?", (key, ))
+        c.execute("SELECT * FROM kv WHERE key = ?", (sqlite3.Binary(key), ))
         if c.fetchone() is not None:
             raise KeyError("Key already in use")
 
         # Perform the insertion
-        c.execute("INSERT INTO kv VALUES (?, ?)", (key, sqlite3.Binary(value)))
+        c.execute("INSERT INTO kv VALUES (?, ?)", (sqlite3.Binary(key), sqlite3.Binary(value)))
         # Commit transaction
         self.conn.commit()
 
@@ -81,7 +81,7 @@ class SqliteBackend():
         c = self.conn.cursor()
 
         # Retrieve value from database
-        c.execute("SELECT value FROM kv WHERE key = ?", (key, ))
+        c.execute("SELECT value FROM kv WHERE key = ?", (sqlite3.Binary(key), ))
 
         # Return the result
         try:
@@ -106,7 +106,7 @@ class SqliteBackend():
         c = self.conn.cursor()
 
         # Perform deletion
-        c.execute("DELETE FROM kv WHERE key = ?", (key, ))
+        c.execute("DELETE FROM kv WHERE key = ?", (sqlite3.Binary(key), ))
         # Commit transaction
         self.conn.commit()
 
