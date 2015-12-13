@@ -277,15 +277,18 @@ class VICBF():
         """Helper function to calculate the slot and increment value"""
         if isinstance(key, (int, long)):
             key = "".join([chr(int(x)) for x in str(key)])
+        elif not isinstance(key, str):
+            print type(key)
         # Get a sha1 hash of the key, combined with a running integer to
         # arrive at hash_functions different hash functions
-        h = hashlib.sha1((key + chr(i))).hexdigest()
+        h = hashlib.sha1(key + chr(int(str(i).encode('hex'), 16))).hexdigest()
         # Convert the hash into an index on the bloom filter
         # Yes, it's not efficient or nice, but it does the job.
         slot_index = int(h, 16) % self.slots
         # Get the sha1 hash of the key, combined with the negative running
         # integer to arrive at another different hash function
-        h = hashlib.sha1(("-" + chr(i) + key)).hexdigest()
+        h = hashlib.sha1("".join(chr(int(x.encode('hex'), 16)) for x in "-" +
+                         str(i)) + key).hexdigest()
         # Again, convert hash into index, this time on the D_L table
         dl_index = int(h, 16) % self.L
         # Compute the increment value
