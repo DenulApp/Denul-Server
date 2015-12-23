@@ -109,8 +109,8 @@ def getDeleteMessage(key, auth):
 def getKVPair():
     nonce = urandom(8)
     value = urandom(16).encode('hex')
-    auth = sha256(nonce).hexdigest()
-    key = sha256(auth).hexdigest()
+    auth = sha256(nonce).digest()
+    key = sha256(auth).digest()
     return key, auth, value
 
 
