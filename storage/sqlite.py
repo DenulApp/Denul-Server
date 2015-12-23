@@ -35,10 +35,10 @@ class SqliteBackend():
         # Check the user_version pragma
         c.execute("PRAGMA user_version")
         uv = c.fetchone()
-        if uv is None:
+        if uv[0] is 0:
             # No tables exist
             self._create_layout()
-        if uv[0] != self.SCHEMA_VERSION:
+        elif uv[0] != self.SCHEMA_VERSION:
             # Different version, upgrade
             self._upgrade(uv[0], self.SCHEMA_VERSION)
 
@@ -49,7 +49,7 @@ class SqliteBackend():
 
         # Create table for key-value-pairs
         c.execute("CREATE TABLE kv (key blob, value blob);")
-        c.execute("CREATE TABLE study (id INTEGER PRIMARY KEY, ident BLOB, pubkey BLOB);")
+        c.execute("CREATE TABLE study (id INTEGER PRIMARY KEY, ident BLOB, pubkey BLOB, message BLOB);")
         c.execute("CREATE TABLE studyEntry (id INTEGER PRIMARY KEY, study INTEGER, data BLOB, FOREIGN KEY (study) REFERENCES study(id) ON DELETE CASCADE);")
         # Set the user_version pragma to indicate the version of the DB layout
         c.execute("PRAGMA user_version = 2")
@@ -63,8 +63,9 @@ class SqliteBackend():
 
         if old == 1 and new == 2:
             # Add new tables
-            c.execute("CREATE TABLE study (id INTEGER PRIMARY KEY, ident BLOB, pubkey BLOB);")
+            c.execute("CREATE TABLE study (id INTEGER PRIMARY KEY, ident BLOB, pubkey BLOB, message BLOB);")
             c.execute("CREATE TABLE studyEntry (id INTEGER PRIMARY KEY, study INTEGER, data BLOB, FOREIGN KEY (study) REFERENCES study(id) ON DELETE CASCADE);")
+            c.execute("PRAGMA user_version = 2;")
         else:
             print "Unknown database upgrade path:", old, "to", new
 
@@ -143,14 +144,15 @@ class SqliteBackend():
         # return result
         return c.fetchall()
 
-    def insert_study(self, ident, pubkey):
+    def insert_study(self, ident, pubkey, msg):
         """Insert a new study into the database"""
         # Get a cursor
         c = self.conn.cursor()
 
         # Run insert
-        c.execute("INSERT INTO study (ident, pubkey) VALUES (?, ?)",
-                  (sqlite3.Binary(ident), sqlite3.Binary(pubkey)))
+        c.execute("INSERT INTO study (ident, pubkey, message) VALUES (?, ?, ?)",
+                  (sqlite3.Binary(ident), sqlite3.Binary(pubkey),
+                   sqlite3.Binary(msg.serializeToString())))
         # Commit
         self.conn.commit()
 

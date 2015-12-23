@@ -18,9 +18,13 @@ import zlib
 
 from messages.c2s_pb2 import ServerHello, StoreReply, DeleteReply, GetReply
 from messages.metaMessage_pb2 import Wrapper
+from messages.studyMessage_pb2 import StudyCreate, StudyCreateReply, StudyDelete, StudyDeleteReply, StudyWrapper, StudyIdentifierRequest, StudyIdentifierReply, StudyJoinQuery, StudyJoinQueryReply
 from storage.sqlite import SqliteBackend
 from vicbf.vicbf import VICBF
 from hashlib import sha256
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
+from Crypto.Signature import PKCS1_v1_5
 
 
 class Cache():
@@ -56,7 +60,7 @@ THRESH_UP = None
 
 
 ### Logging helper functions
-def debug(string):
+def debug(strng):
     """Print a debugging string if debugging is active.
 
     Displays the function name of the caller to make debugging easier.
@@ -64,7 +68,7 @@ def debug(string):
     http://jugad2.blogspot.in/2015/09/find-caller-and-callers-caller-of.html
     """
     if DEBUG:
-        print sys._getframe(1).f_code.co_name + ":", string
+        print sys._getframe(1).f_code.co_name + ":", strng
 
 
 ### Network helper functions
@@ -93,6 +97,8 @@ def RecvOneMsg(sock):
 
 
 def sendMessage(msg, sock):
+    if msg is None:
+        return
     ms = msg.SerializeToString()
     # mb = [elem.encode('hex') for elem in ms]
     # Messages are sent as byte strings prefixed with their own length
@@ -118,6 +124,23 @@ def invalidateVicbfSerializationCache():
 def keyFormatValid(key):
     return len(key) == 32
 
+
+def queueFormatValid(queue):
+    return len(queue) == 16
+
+
+### Crypto helper functions
+def pubkeyFromBytes(pkcs):
+    return RSA.importKey(pkcs)
+
+
+def verifyPKCS15_SHA256(pub, data, sig):
+    # Create hash object
+    h = SHA256.new(data)
+    # Create verifier
+    verifier = PKCS1_v1_5.new(pub)
+    # Return verification result
+    return verifier.verify(h, sig)
 
 ##### Message Creation Functions
 # Example function:
@@ -273,6 +296,51 @@ def HandleGetMessage(msg, sock):
     return wrapper
 
 
+def HandleStudyWrapperMessage(msg, sock):
+    mtype = msg.type
+    # TODO Verify signature
+    if mtype == StudyWrapper.MSG_STUDYCREATE:
+        HandleStudyCreateMessage(msg, sock)
+    elif mtype == StudyWrapper.MSG_STUDYJOINQUERY:
+        # TODO Ensure semi-constant timing
+        pass
+    elif mtype == StudyWrapper.MSG_STUDYDELETE:
+        # TODO Ensure semi-constant timing
+        pass
+    else:
+        debug("Unknown message type received")
+        return None
+
+
+def HandleStudyCreateMessage(msg, sock):
+    # Parse StudyCreate
+    screate = StudyCreate()
+    screate.ParseFromString(msg.message)
+    # Prepare reply
+    sreply = StudyCreateReply()
+    sreply.queueIdentifier = screate.queueIdentifier
+    wrapper = Wrapper()
+    # Read out public key and verify signature
+    pub = pubkeyFromBytes(screate.publicKey)
+    if not verifyPKCS15_SHA256(pub, msg.message, msg.signature):
+        debug("Invalid signature on message")
+        sreply.status = StudyCreateReply.CREATE_FAIL_SIGNATURE
+        wrapper.StudyCreateReply.MergeFrom(sreply)
+        return wrapper
+    if not queueFormatValid(screate.queueIdentifier):
+        debug("Invalid queue identifier")
+        sreply.status = StudyCreateReply.CREATE_FAIL_IDENTIFIER
+        wrapper.StudyCreateReply.MergeFrom(sreply)
+        return wrapper
+    # Insert into database
+    DatabaseBackend.insert_study(screate.queueIdentifier, screate.publicKey,
+                                 msg)
+    # Prepare reply
+    sreply.status = StudyCreateReply.CREATE_OK
+    wrapper.StudyCreateReply.MergeFrom(sreply)
+    return wrapper
+
+
 # Handler for all incoming messages
 def HandleMessage(message, sock):
     mtype = message.WhichOneof('message')
@@ -288,6 +356,9 @@ def HandleMessage(message, sock):
     elif mtype == "Get":
         debug("Received Get")
         return HandleGetMessage(message.Get, sock)
+    elif mtype == "StudyWrapper":
+        debug("Received StudyWrapper")
+        return HandleStudyWrapperMessage(message.StudyWrapper, sock)
     # and so on
 
 
