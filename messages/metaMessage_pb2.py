@@ -14,14 +14,15 @@ _sym_db = _symbol_database.Default()
 
 
 import c2s_pb2
+import studyMessage_pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='metaMessage.proto',
   package='de.velcommuta.denul.networking.protobuf.meta',
-  serialized_pb=_b('\n\x11metaMessage.proto\x12,de.velcommuta.denul.networking.protobuf.meta\x1a\tc2s.proto\"\xee\x04\n\x07Wrapper\x12O\n\x0b\x43lientHello\x18\x01 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.ClientHelloH\x00\x12O\n\x0bServerHello\x18\x02 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.ServerHelloH\x00\x12\x43\n\x05Store\x18\x03 \x01(\x0b\x32\x32.de.velcommuta.denul.networking.protobuf.c2s.StoreH\x00\x12M\n\nStoreReply\x18\x04 \x01(\x0b\x32\x37.de.velcommuta.denul.networking.protobuf.c2s.StoreReplyH\x00\x12?\n\x03Get\x18\x05 \x01(\x0b\x32\x30.de.velcommuta.denul.networking.protobuf.c2s.GetH\x00\x12I\n\x08GetReply\x18\x06 \x01(\x0b\x32\x35.de.velcommuta.denul.networking.protobuf.c2s.GetReplyH\x00\x12\x45\n\x06\x44\x65lete\x18\x07 \x01(\x0b\x32\x33.de.velcommuta.denul.networking.protobuf.c2s.DeleteH\x00\x12O\n\x0b\x44\x65leteReply\x18\x08 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.DeleteReplyH\x00\x42\t\n\x07message')
+  serialized_pb=_b('\n\x11metaMessage.proto\x12,de.velcommuta.denul.networking.protobuf.meta\x1a\tc2s.proto\x1a\x12studyMessage.proto\"\xe0\x07\n\x07Wrapper\x12O\n\x0b\x43lientHello\x18\x01 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.ClientHelloH\x00\x12O\n\x0bServerHello\x18\x02 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.ServerHelloH\x00\x12\x43\n\x05Store\x18\x03 \x01(\x0b\x32\x32.de.velcommuta.denul.networking.protobuf.c2s.StoreH\x00\x12M\n\nStoreReply\x18\x04 \x01(\x0b\x32\x37.de.velcommuta.denul.networking.protobuf.c2s.StoreReplyH\x00\x12?\n\x03Get\x18\x05 \x01(\x0b\x32\x30.de.velcommuta.denul.networking.protobuf.c2s.GetH\x00\x12I\n\x08GetReply\x18\x06 \x01(\x0b\x32\x35.de.velcommuta.denul.networking.protobuf.c2s.GetReplyH\x00\x12\x45\n\x06\x44\x65lete\x18\x07 \x01(\x0b\x32\x33.de.velcommuta.denul.networking.protobuf.c2s.DeleteH\x00\x12O\n\x0b\x44\x65leteReply\x18\x08 \x01(\x0b\x32\x38.de.velcommuta.denul.networking.protobuf.c2s.DeleteReplyH\x00\x12S\n\x0cStudyWrapper\x18\t \x01(\x0b\x32;.de.velcommuta.denul.networking.protobuf.study.StudyWrapperH\x00\x12[\n\x10StudyCreatereply\x18\n \x01(\x0b\x32?.de.velcommuta.denul.networking.protobuf.study.StudyCreateReplyH\x00\x12\x61\n\x13StudyJoinQueryReply\x18\r \x01(\x0b\x32\x42.de.velcommuta.denul.networking.protobuf.study.StudyJoinQueryReplyH\x00\x12[\n\x10StudyDeleteReply\x18\x0e \x01(\x0b\x32?.de.velcommuta.denul.networking.protobuf.study.StudyDeleteReplyH\x00\x42\t\n\x07message')
   ,
-  dependencies=[c2s_pb2.DESCRIPTOR,])
+  dependencies=[c2s_pb2.DESCRIPTOR,studyMessage_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
@@ -90,6 +91,34 @@ _WRAPPER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='StudyWrapper', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.StudyWrapper', index=8,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='StudyCreatereply', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.StudyCreatereply', index=9,
+      number=10, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='StudyJoinQueryReply', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.StudyJoinQueryReply', index=10,
+      number=13, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='StudyDeleteReply', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.StudyDeleteReply', index=11,
+      number=14, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -104,8 +133,8 @@ _WRAPPER = _descriptor.Descriptor(
       name='message', full_name='de.velcommuta.denul.networking.protobuf.meta.Wrapper.message',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=79,
-  serialized_end=701,
+  serialized_start=99,
+  serialized_end=1091,
 )
 
 _WRAPPER.fields_by_name['ClientHello'].message_type = c2s_pb2._CLIENTHELLO
@@ -116,6 +145,10 @@ _WRAPPER.fields_by_name['Get'].message_type = c2s_pb2._GET
 _WRAPPER.fields_by_name['GetReply'].message_type = c2s_pb2._GETREPLY
 _WRAPPER.fields_by_name['Delete'].message_type = c2s_pb2._DELETE
 _WRAPPER.fields_by_name['DeleteReply'].message_type = c2s_pb2._DELETEREPLY
+_WRAPPER.fields_by_name['StudyWrapper'].message_type = studyMessage_pb2._STUDYWRAPPER
+_WRAPPER.fields_by_name['StudyCreatereply'].message_type = studyMessage_pb2._STUDYCREATEREPLY
+_WRAPPER.fields_by_name['StudyJoinQueryReply'].message_type = studyMessage_pb2._STUDYJOINQUERYREPLY
+_WRAPPER.fields_by_name['StudyDeleteReply'].message_type = studyMessage_pb2._STUDYDELETEREPLY
 _WRAPPER.oneofs_by_name['message'].fields.append(
   _WRAPPER.fields_by_name['ClientHello'])
 _WRAPPER.fields_by_name['ClientHello'].containing_oneof = _WRAPPER.oneofs_by_name['message']
@@ -140,6 +173,18 @@ _WRAPPER.fields_by_name['Delete'].containing_oneof = _WRAPPER.oneofs_by_name['me
 _WRAPPER.oneofs_by_name['message'].fields.append(
   _WRAPPER.fields_by_name['DeleteReply'])
 _WRAPPER.fields_by_name['DeleteReply'].containing_oneof = _WRAPPER.oneofs_by_name['message']
+_WRAPPER.oneofs_by_name['message'].fields.append(
+  _WRAPPER.fields_by_name['StudyWrapper'])
+_WRAPPER.fields_by_name['StudyWrapper'].containing_oneof = _WRAPPER.oneofs_by_name['message']
+_WRAPPER.oneofs_by_name['message'].fields.append(
+  _WRAPPER.fields_by_name['StudyCreatereply'])
+_WRAPPER.fields_by_name['StudyCreatereply'].containing_oneof = _WRAPPER.oneofs_by_name['message']
+_WRAPPER.oneofs_by_name['message'].fields.append(
+  _WRAPPER.fields_by_name['StudyJoinQueryReply'])
+_WRAPPER.fields_by_name['StudyJoinQueryReply'].containing_oneof = _WRAPPER.oneofs_by_name['message']
+_WRAPPER.oneofs_by_name['message'].fields.append(
+  _WRAPPER.fields_by_name['StudyDeleteReply'])
+_WRAPPER.fields_by_name['StudyDeleteReply'].containing_oneof = _WRAPPER.oneofs_by_name['message']
 DESCRIPTOR.message_types_by_name['Wrapper'] = _WRAPPER
 
 Wrapper = _reflection.GeneratedProtocolMessageType('Wrapper', (_message.Message,), dict(
