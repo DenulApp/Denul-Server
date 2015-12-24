@@ -323,12 +323,12 @@ def HandleStudyCreateMessage(msg, sock):
     # Read out public key and verify signature
     pub = pubkeyFromBytes(screate.publicKey)
     if not verifyPKCS15_SHA256(pub, msg.message, msg.signature):
-        debug("Invalid signature on message")
+        debug("ERROR: Invalid signature on message")
         sreply.status = StudyCreateReply.CREATE_FAIL_SIGNATURE
         wrapper.StudyCreateReply.MergeFrom(sreply)
         return wrapper
     if not queueFormatValid(screate.queueIdentifier):
-        debug("Invalid queue identifier")
+        debug("ERROR: Invalid queue identifier")
         sreply.status = StudyCreateReply.CREATE_FAIL_IDENTIFIER
         wrapper.StudyCreateReply.MergeFrom(sreply)
         return wrapper
