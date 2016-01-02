@@ -152,7 +152,7 @@ class SqliteBackend():
         # Run insert
         c.execute("INSERT INTO study (ident, pubkey, message) VALUES (?, ?, ?)",
                   (sqlite3.Binary(ident), sqlite3.Binary(pubkey),
-                   sqlite3.Binary(msg.serializeToString())))
+                   sqlite3.Binary(msg.SerializeToString())))
         # Commit
         self.conn.commit()
 
