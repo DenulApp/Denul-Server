@@ -300,6 +300,7 @@ def HandleStudyWrapperMessage(msg, sock):
     mtype = msg.type
     # TODO Verify signature
     if mtype == StudyWrapper.MSG_STUDYCREATE:
+        debug("Got StudyCreate message")
         HandleStudyCreateMessage(msg, sock)
     elif mtype == StudyWrapper.MSG_STUDYJOINQUERY:
         # TODO Ensure semi-constant timing
@@ -332,6 +333,7 @@ def HandleStudyCreateMessage(msg, sock):
         sreply.status = StudyCreateReply.CREATE_FAIL_IDENTIFIER
         wrapper.StudyCreateReply.MergeFrom(sreply)
         return wrapper
+    debug("Signature verification okay")
     # Insert into database
     DatabaseBackend.insert_study(screate.queueIdentifier, screate.publicKey,
                                  msg)
