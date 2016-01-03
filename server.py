@@ -369,6 +369,9 @@ def HandleMessage(message, sock):
     elif mtype == "StudyWrapper":
         debug("Received StudyWrapper")
         return HandleStudyWrapperMessage(message.StudyWrapper, sock)
+    elif mtype == "StudyListQuery":
+        debug("Received StudyListQuery")
+        return HandleStudyListRequest(message.StudyListQuery, sock)
     # and so on
 
 
@@ -421,9 +424,6 @@ if __name__ == "__main__":
     # which will be cached, and ignore the result.
     print "Populate cache"
     getVicbfSerialization()
-
-    # Test code
-    HandleStudyListRequest(None, None)
 
     print "Denul server started on port " + str(PORT)
 
