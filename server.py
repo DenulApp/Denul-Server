@@ -18,7 +18,7 @@ import zlib
 
 from messages.c2s_pb2 import ServerHello, StoreReply, DeleteReply, GetReply
 from messages.metaMessage_pb2 import Wrapper
-from messages.studyMessage_pb2 import StudyCreate, StudyCreateReply, StudyDelete, StudyDeleteReply, StudyWrapper, StudyIdentifierRequest, StudyIdentifierReply, StudyJoinQuery, StudyJoinQueryReply
+from messages.studyMessage_pb2 import StudyCreate, StudyCreateReply, StudyDelete, StudyDeleteReply, StudyWrapper, StudyIdentifierRequest, StudyIdentifierReply, StudyJoinQuery, StudyJoinQueryReply, StudyListQuery, StudyListReply
 from storage.sqlite import SqliteBackend
 from vicbf.vicbf import VICBF
 from hashlib import sha256
@@ -341,6 +341,16 @@ def HandleStudyCreateMessage(msg, sock):
     return wrapper
 
 
+def HandleStudyListRequest(msg, sock):
+    # The message itself is not interesting, as it does not contain any
+    # information - it's just an empty request
+    reply = StudyListReply()
+    for msg in DatabaseBackend.list_studies():
+        wrapper = reply.studylist.add()
+        wrapper.ParseFromString(msg[0])
+    return reply
+
+
 # Handler for all incoming messages
 def HandleMessage(message, sock):
     mtype = message.WhichOneof('message')
@@ -411,6 +421,9 @@ if __name__ == "__main__":
     # which will be cached, and ignore the result.
     print "Populate cache"
     getVicbfSerialization()
+
+    # Test code
+    HandleStudyListRequest(None, None)
 
     print "Denul server started on port " + str(PORT)
 

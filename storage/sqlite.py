@@ -156,6 +156,15 @@ class SqliteBackend():
         # Commit
         self.conn.commit()
 
+    def list_studies(self):
+        """Get a List of Studies in the database"""
+        # Get a cursor
+        c = self.conn.cursor()
+        # Run query
+        c.execute("SELECT message FROM study;")
+        # Return raw result (needs to be parsed into messages by caller)
+        return c.fetchall()
+
     def insert_studyjoin(self, ident, data):
         """Insert a studyJoin message into the database"""
         # Get a cursor
