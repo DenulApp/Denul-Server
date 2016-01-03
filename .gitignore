@@ -1,5 +1,12 @@
+# Compiled python bytecode
 *.pyc
+# Sublime text files
 *.sublime-*
+# SSL keys and certificates
 *.crt
 *.key
+*.pem
+# Virtual environments
+venv
+# Databases
 *.db
