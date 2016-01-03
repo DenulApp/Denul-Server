@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='studyMessage.proto',
   package='de.velcommuta.denul.networking.protobuf.study',
-  serialized_pb=_b('\n\x12studyMessage.proto\x12-de.velcommuta.denul.networking.protobuf.study\"\xeb\x01\n\x0cStudyWrapper\x12U\n\x04type\x18\x01 \x02(\x0e\x32G.de.velcommuta.denul.networking.protobuf.study.StudyWrapper.MessageType\x12\x0f\n\x07message\x18\x02 \x02(\x0c\x12\x11\n\tsignature\x18\x03 \x02(\x0c\"`\n\x0bMessageType\x12\x0f\n\x0bMSG_UNKNOWN\x10\x00\x12\x13\n\x0fMSG_STUDYCREATE\x10\x01\x12\x16\n\x12MSG_STUDYJOINQUERY\x10\x02\x12\x13\n\x0fMSG_STUDYDELETE\x10\x03\"\xbe\x0b\n\x0bStudyCreate\x12\x12\n\nstudy_name\x18\x01 \x02(\t\x12\x13\n\x0binstitution\x18\x02 \x02(\t\x12\x0f\n\x07webpage\x18\x03 \x02(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x02(\t\x12\x0f\n\x07purpose\x18\x05 \x02(\t\x12\x12\n\nprocedures\x18\x06 \x02(\t\x12\r\n\x05risks\x18\x07 \x02(\t\x12\x10\n\x08\x62\x65nefits\x18\x08 \x02(\t\x12\x0f\n\x07payment\x18\t \x02(\t\x12\x11\n\tconflicts\x18\n \x02(\t\x12\x17\n\x0f\x63onfidentiality\x18\x0b \x02(\t\x12\"\n\x1aparticipationAndWithdrawal\x18\x0c \x02(\t\x12\x0e\n\x06rights\x18\r \x02(\t\x12^\n\rinvestigators\x18\x0e \x03(\x0b\x32G.de.velcommuta.denul.networking.protobuf.study.StudyCreate.Investigator\x12[\n\x0b\x64\x61taRequest\x18\x0f \x03(\x0b\x32\x46.de.velcommuta.denul.networking.protobuf.study.StudyCreate.DataRequest\x12\x11\n\tpublicKey\x18\x10 \x02(\x0c\x12\\\n\rpublicKeyAlgo\x18\x11 \x02(\x0e\x32\x45.de.velcommuta.denul.networking.protobuf.study.StudyCreate.PubkeyAlgo\x12m\n\x14verificationStrategy\x18\x12 \x02(\x0e\x32O.de.velcommuta.denul.networking.protobuf.study.StudyCreate.VerificationStrategy\x12\x18\n\x10verificationData\x18\x13 \x01(\t\x12\x0f\n\x07kexData\x18\x14 \x02(\x0c\x12X\n\x0ckexAlgorithm\x18\x15 \x02(\x0e\x32\x42.de.velcommuta.denul.networking.protobuf.study.StudyCreate.KexAlgo\x12\x17\n\x0fqueueIdentifier\x18\x16 \x02(\x0c\x1aR\n\x0cInvestigator\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x13\n\x0binstitution\x18\x02 \x02(\t\x12\r\n\x05group\x18\x03 \x02(\t\x12\x10\n\x08position\x18\x04 \x02(\t\x1a\xd8\x01\n\x0b\x44\x61taRequest\x12U\n\x08\x64\x61tatype\x18\x01 \x02(\x0e\x32\x43.de.velcommuta.denul.networking.protobuf.study.StudyCreate.DataType\x12_\n\x0bgranularity\x18\x02 \x02(\x0e\x32J.de.velcommuta.denul.networking.protobuf.study.StudyCreate.DataGranularity\x12\x11\n\tfrequency\x18\x03 \x02(\x05\"E\n\x08\x44\x61taType\x12\x10\n\x0c\x44\x41TA_UNKNOWN\x10\x00\x12\x12\n\x0e\x44\x41TA_GPS_TRACK\x10\x01\x12\x13\n\x0f\x44\x41TA_STEP_COUNT\x10\x02\"G\n\x0f\x44\x61taGranularity\x12\r\n\tGRAN_FINE\x10\x00\x12\x0f\n\x0bGRAN_COARSE\x10\x01\x12\x14\n\x10GRAN_VERY_COARSE\x10\x02\"3\n\x07KexAlgo\x12\x0f\n\x0bKEX_UNKNOWN\x10\x00\x12\x17\n\x13KEX_ECDH_CURVE25519\x10\x01\"(\n\nPubkeyAlgo\x12\x0e\n\nPK_UNKNOWN\x10\x00\x12\n\n\x06PK_RSA\x10\x01\"P\n\x14VerificationStrategy\x12\x0e\n\nVF_UNKNOWN\x10\x00\x12\x0e\n\nVF_DNS_TXT\x10\x01\x12\x0b\n\x07VF_FILE\x10\x02\x12\x0b\n\x07VF_META\x10\x03\"\x92\x02\n\x10StudyCreateReply\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\x12\\\n\x06status\x18\x02 \x02(\x0e\x32L.de.velcommuta.denul.networking.protobuf.study.StudyCreateReply.CreateStatus\"\x86\x01\n\x0c\x43reateStatus\x12\x12\n\x0e\x43REATE_UNKNOWN\x10\x00\x12\r\n\tCREATE_OK\x10\x01\x12\x19\n\x15\x43REATE_FAIL_SIGNATURE\x10\x02\x12\x1a\n\x16\x43REATE_FAIL_IDENTIFIER\x10\x03\x12\x1c\n\x18\x43REATE_FAIL_VERIFICATION\x10\x04\"\x18\n\x16StudyIdentifierRequest\"/\n\x14StudyIdentifierReply\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\"\xc2\x01\n\tStudyJoin\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\x12\x0f\n\x07kexData\x18\x02 \x02(\x0c\x12V\n\x0ckexAlgorithm\x18\x03 \x02(\x0e\x32@.de.velcommuta.denul.networking.protobuf.study.StudyJoin.KexAlgo\"3\n\x07KexAlgo\x12\x0f\n\x0bKEX_UNKNOWN\x10\x00\x12\x17\n\x13KEX_ECDH_CURVE25519\x10\x01\")\n\x0eStudyJoinQuery\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\"\xee\x01\n\x13StudyJoinQueryReply\x12^\n\x06status\x18\x01 \x02(\x0e\x32N.de.velcommuta.denul.networking.protobuf.study.StudyJoinQueryReply.QueryStatus\x12\x0f\n\x07message\x18\x02 \x03(\x0c\"f\n\x0bQueryStatus\x12\x12\n\x0eSTATUS_UNKNOWN\x10\x00\x12\r\n\tSTATUS_OK\x10\x01\x12\x19\n\x15STATUS_FAIL_NOT_FOUND\x10\x02\x12\x19\n\x15STATUS_FAIL_SIGNATURE\x10\x03\"&\n\x0bStudyDelete\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\"\xd7\x01\n\x10StudyDeleteReply\x12\\\n\x06status\x18\x01 \x02(\x0e\x32L.de.velcommuta.denul.networking.protobuf.study.StudyDeleteReply.DeleteStatus\"e\n\x0c\x44\x65leteStatus\x12\x12\n\x0e\x44\x45LETE_UNKNOWN\x10\x00\x12\r\n\tDELETE_OK\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_BAD_IDENT\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_BAD_SIG\x10\x03')
+  serialized_pb=_b('\n\x12studyMessage.proto\x12-de.velcommuta.denul.networking.protobuf.study\"\xeb\x01\n\x0cStudyWrapper\x12U\n\x04type\x18\x01 \x02(\x0e\x32G.de.velcommuta.denul.networking.protobuf.study.StudyWrapper.MessageType\x12\x0f\n\x07message\x18\x02 \x02(\x0c\x12\x11\n\tsignature\x18\x03 \x02(\x0c\"`\n\x0bMessageType\x12\x0f\n\x0bMSG_UNKNOWN\x10\x00\x12\x13\n\x0fMSG_STUDYCREATE\x10\x01\x12\x16\n\x12MSG_STUDYJOINQUERY\x10\x02\x12\x13\n\x0fMSG_STUDYDELETE\x10\x03\"\xbe\x0b\n\x0bStudyCreate\x12\x12\n\nstudy_name\x18\x01 \x02(\t\x12\x13\n\x0binstitution\x18\x02 \x02(\t\x12\x0f\n\x07webpage\x18\x03 \x02(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x02(\t\x12\x0f\n\x07purpose\x18\x05 \x02(\t\x12\x12\n\nprocedures\x18\x06 \x02(\t\x12\r\n\x05risks\x18\x07 \x02(\t\x12\x10\n\x08\x62\x65nefits\x18\x08 \x02(\t\x12\x0f\n\x07payment\x18\t \x02(\t\x12\x11\n\tconflicts\x18\n \x02(\t\x12\x17\n\x0f\x63onfidentiality\x18\x0b \x02(\t\x12\"\n\x1aparticipationAndWithdrawal\x18\x0c \x02(\t\x12\x0e\n\x06rights\x18\r \x02(\t\x12^\n\rinvestigators\x18\x0e \x03(\x0b\x32G.de.velcommuta.denul.networking.protobuf.study.StudyCreate.Investigator\x12[\n\x0b\x64\x61taRequest\x18\x0f \x03(\x0b\x32\x46.de.velcommuta.denul.networking.protobuf.study.StudyCreate.DataRequest\x12\x11\n\tpublicKey\x18\x10 \x02(\x0c\x12\\\n\rpublicKeyAlgo\x18\x11 \x02(\x0e\x32\x45.de.velcommuta.denul.networking.protobuf.study.StudyCreate.PubkeyAlgo\x12m\n\x14verificationStrategy\x18\x12 \x02(\x0e\x32O.de.velcommuta.denul.networking.protobuf.study.StudyCreate.VerificationStrategy\x12\x18\n\x10verificationData\x18\x13 \x01(\t\x12\x0f\n\x07kexData\x18\x14 \x02(\x0c\x12X\n\x0ckexAlgorithm\x18\x15 \x02(\x0e\x32\x42.de.velcommuta.denul.networking.protobuf.study.StudyCreate.KexAlgo\x12\x17\n\x0fqueueIdentifier\x18\x16 \x02(\x0c\x1aR\n\x0cInvestigator\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x13\n\x0binstitution\x18\x02 \x02(\t\x12\r\n\x05group\x18\x03 \x02(\t\x12\x10\n\x08position\x18\x04 \x02(\t\x1a\xd8\x01\n\x0b\x44\x61taRequest\x12U\n\x08\x64\x61tatype\x18\x01 \x02(\x0e\x32\x43.de.velcommuta.denul.networking.protobuf.study.StudyCreate.DataType\x12_\n\x0bgranularity\x18\x02 \x02(\x0e\x32J.de.velcommuta.denul.networking.protobuf.study.StudyCreate.DataGranularity\x12\x11\n\tfrequency\x18\x03 \x02(\x05\"E\n\x08\x44\x61taType\x12\x10\n\x0c\x44\x41TA_UNKNOWN\x10\x00\x12\x12\n\x0e\x44\x41TA_GPS_TRACK\x10\x01\x12\x13\n\x0f\x44\x41TA_STEP_COUNT\x10\x02\"G\n\x0f\x44\x61taGranularity\x12\r\n\tGRAN_FINE\x10\x00\x12\x0f\n\x0bGRAN_COARSE\x10\x01\x12\x14\n\x10GRAN_VERY_COARSE\x10\x02\"3\n\x07KexAlgo\x12\x0f\n\x0bKEX_UNKNOWN\x10\x00\x12\x17\n\x13KEX_ECDH_CURVE25519\x10\x01\"(\n\nPubkeyAlgo\x12\x0e\n\nPK_UNKNOWN\x10\x00\x12\n\n\x06PK_RSA\x10\x01\"P\n\x14VerificationStrategy\x12\x0e\n\nVF_UNKNOWN\x10\x00\x12\x0e\n\nVF_DNS_TXT\x10\x01\x12\x0b\n\x07VF_FILE\x10\x02\x12\x0b\n\x07VF_META\x10\x03\"\x92\x02\n\x10StudyCreateReply\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\x12\\\n\x06status\x18\x02 \x02(\x0e\x32L.de.velcommuta.denul.networking.protobuf.study.StudyCreateReply.CreateStatus\"\x86\x01\n\x0c\x43reateStatus\x12\x12\n\x0e\x43REATE_UNKNOWN\x10\x00\x12\r\n\tCREATE_OK\x10\x01\x12\x19\n\x15\x43REATE_FAIL_SIGNATURE\x10\x02\x12\x1a\n\x16\x43REATE_FAIL_IDENTIFIER\x10\x03\x12\x1c\n\x18\x43REATE_FAIL_VERIFICATION\x10\x04\"\x18\n\x16StudyIdentifierRequest\"/\n\x14StudyIdentifierReply\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\"\x10\n\x0eStudyListQuery\"`\n\x0eStudyListReply\x12N\n\tstudylist\x18\x01 \x03(\x0b\x32;.de.velcommuta.denul.networking.protobuf.study.StudyWrapper\"\xc2\x01\n\tStudyJoin\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\x12\x0f\n\x07kexData\x18\x02 \x02(\x0c\x12V\n\x0ckexAlgorithm\x18\x03 \x02(\x0e\x32@.de.velcommuta.denul.networking.protobuf.study.StudyJoin.KexAlgo\"3\n\x07KexAlgo\x12\x0f\n\x0bKEX_UNKNOWN\x10\x00\x12\x17\n\x13KEX_ECDH_CURVE25519\x10\x01\")\n\x0eStudyJoinQuery\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\"\xee\x01\n\x13StudyJoinQueryReply\x12^\n\x06status\x18\x01 \x02(\x0e\x32N.de.velcommuta.denul.networking.protobuf.study.StudyJoinQueryReply.QueryStatus\x12\x0f\n\x07message\x18\x02 \x03(\x0c\"f\n\x0bQueryStatus\x12\x12\n\x0eSTATUS_UNKNOWN\x10\x00\x12\r\n\tSTATUS_OK\x10\x01\x12\x19\n\x15STATUS_FAIL_NOT_FOUND\x10\x02\x12\x19\n\x15STATUS_FAIL_SIGNATURE\x10\x03\"&\n\x0bStudyDelete\x12\x17\n\x0fqueueIdentifier\x18\x01 \x02(\x0c\"\xd7\x01\n\x10StudyDeleteReply\x12\\\n\x06status\x18\x01 \x02(\x0e\x32L.de.velcommuta.denul.networking.protobuf.study.StudyDeleteReply.DeleteStatus\"e\n\x0c\x44\x65leteStatus\x12\x12\n\x0e\x44\x45LETE_UNKNOWN\x10\x00\x12\r\n\tDELETE_OK\x10\x01\x12\x19\n\x15\x44\x45LETE_FAIL_BAD_IDENT\x10\x02\x12\x17\n\x13\x44\x45LETE_FAIL_BAD_SIG\x10\x03')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -261,8 +261,8 @@ _STUDYJOINQUERYREPLY_QUERYSTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=2509,
-  serialized_end=2611,
+  serialized_start=2625,
+  serialized_end=2727,
 )
 _sym_db.RegisterEnumDescriptor(_STUDYJOINQUERYREPLY_QUERYSTATUS)
 
@@ -291,8 +291,8 @@ _STUDYDELETEREPLY_DELETESTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=2768,
-  serialized_end=2869,
+  serialized_start=2884,
+  serialized_end=2985,
 )
 _sym_db.RegisterEnumDescriptor(_STUDYDELETEREPLY_DELETESTATUS)
 
@@ -708,6 +708,59 @@ _STUDYIDENTIFIERREPLY = _descriptor.Descriptor(
 )
 
 
+_STUDYLISTQUERY = _descriptor.Descriptor(
+  name='StudyListQuery',
+  full_name='de.velcommuta.denul.networking.protobuf.study.StudyListQuery',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2132,
+  serialized_end=2148,
+)
+
+
+_STUDYLISTREPLY = _descriptor.Descriptor(
+  name='StudyListReply',
+  full_name='de.velcommuta.denul.networking.protobuf.study.StudyListReply',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='studylist', full_name='de.velcommuta.denul.networking.protobuf.study.StudyListReply.studylist', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2150,
+  serialized_end=2246,
+)
+
+
 _STUDYJOIN = _descriptor.Descriptor(
   name='StudyJoin',
   full_name='de.velcommuta.denul.networking.protobuf.study.StudyJoin',
@@ -748,8 +801,8 @@ _STUDYJOIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2133,
-  serialized_end=2327,
+  serialized_start=2249,
+  serialized_end=2443,
 )
 
 
@@ -778,8 +831,8 @@ _STUDYJOINQUERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2329,
-  serialized_end=2370,
+  serialized_start=2445,
+  serialized_end=2486,
 )
 
 
@@ -816,8 +869,8 @@ _STUDYJOINQUERYREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2373,
-  serialized_end=2611,
+  serialized_start=2489,
+  serialized_end=2727,
 )
 
 
@@ -846,8 +899,8 @@ _STUDYDELETE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2613,
-  serialized_end=2651,
+  serialized_start=2729,
+  serialized_end=2767,
 )
 
 
@@ -877,8 +930,8 @@ _STUDYDELETEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2654,
-  serialized_end=2869,
+  serialized_start=2770,
+  serialized_end=2985,
 )
 
 _STUDYWRAPPER.fields_by_name['type'].enum_type = _STUDYWRAPPER_MESSAGETYPE
@@ -899,6 +952,7 @@ _STUDYCREATE_PUBKEYALGO.containing_type = _STUDYCREATE
 _STUDYCREATE_VERIFICATIONSTRATEGY.containing_type = _STUDYCREATE
 _STUDYCREATEREPLY.fields_by_name['status'].enum_type = _STUDYCREATEREPLY_CREATESTATUS
 _STUDYCREATEREPLY_CREATESTATUS.containing_type = _STUDYCREATEREPLY
+_STUDYLISTREPLY.fields_by_name['studylist'].message_type = _STUDYWRAPPER
 _STUDYJOIN.fields_by_name['kexAlgorithm'].enum_type = _STUDYJOIN_KEXALGO
 _STUDYJOIN_KEXALGO.containing_type = _STUDYJOIN
 _STUDYJOINQUERYREPLY.fields_by_name['status'].enum_type = _STUDYJOINQUERYREPLY_QUERYSTATUS
@@ -910,6 +964,8 @@ DESCRIPTOR.message_types_by_name['StudyCreate'] = _STUDYCREATE
 DESCRIPTOR.message_types_by_name['StudyCreateReply'] = _STUDYCREATEREPLY
 DESCRIPTOR.message_types_by_name['StudyIdentifierRequest'] = _STUDYIDENTIFIERREQUEST
 DESCRIPTOR.message_types_by_name['StudyIdentifierReply'] = _STUDYIDENTIFIERREPLY
+DESCRIPTOR.message_types_by_name['StudyListQuery'] = _STUDYLISTQUERY
+DESCRIPTOR.message_types_by_name['StudyListReply'] = _STUDYLISTREPLY
 DESCRIPTOR.message_types_by_name['StudyJoin'] = _STUDYJOIN
 DESCRIPTOR.message_types_by_name['StudyJoinQuery'] = _STUDYJOINQUERY
 DESCRIPTOR.message_types_by_name['StudyJoinQueryReply'] = _STUDYJOINQUERYREPLY
@@ -966,6 +1022,20 @@ StudyIdentifierReply = _reflection.GeneratedProtocolMessageType('StudyIdentifier
   # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.study.StudyIdentifierReply)
   ))
 _sym_db.RegisterMessage(StudyIdentifierReply)
+
+StudyListQuery = _reflection.GeneratedProtocolMessageType('StudyListQuery', (_message.Message,), dict(
+  DESCRIPTOR = _STUDYLISTQUERY,
+  __module__ = 'studyMessage_pb2'
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.study.StudyListQuery)
+  ))
+_sym_db.RegisterMessage(StudyListQuery)
+
+StudyListReply = _reflection.GeneratedProtocolMessageType('StudyListReply', (_message.Message,), dict(
+  DESCRIPTOR = _STUDYLISTREPLY,
+  __module__ = 'studyMessage_pb2'
+  # @@protoc_insertion_point(class_scope:de.velcommuta.denul.networking.protobuf.study.StudyListReply)
+  ))
+_sym_db.RegisterMessage(StudyListReply)
 
 StudyJoin = _reflection.GeneratedProtocolMessageType('StudyJoin', (_message.Message,), dict(
   DESCRIPTOR = _STUDYJOIN,

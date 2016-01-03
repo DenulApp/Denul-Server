@@ -298,7 +298,6 @@ def HandleGetMessage(msg, sock):
 
 def HandleStudyWrapperMessage(msg, sock):
     mtype = msg.type
-    # TODO Verify signature
     if mtype == StudyWrapper.MSG_STUDYCREATE:
         debug("Got StudyCreate message")
         return HandleStudyCreateMessage(msg, sock)
@@ -333,12 +332,10 @@ def HandleStudyCreateMessage(msg, sock):
         sreply.status = StudyCreateReply.CREATE_FAIL_IDENTIFIER
         wrapper.StudyCreateReply.MergeFrom(sreply)
         return wrapper
-    debug("Signature verification okay")
     # Insert into database
     DatabaseBackend.insert_study(screate.queueIdentifier, screate.publicKey,
                                  msg)
     # Prepare reply
-    debug("Insert okay")
     sreply.status = StudyCreateReply.CREATE_OK
     wrapper.StudyCreateReply.MergeFrom(sreply)
     return wrapper
