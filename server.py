@@ -348,7 +348,9 @@ def HandleStudyListRequest(msg, sock):
     for msg in DatabaseBackend.list_studies():
         wrapper = reply.studylist.add()
         wrapper.ParseFromString(msg[0])
-    return reply
+    replywrapper = Wrapper()
+    replywrapper.StudyListReply.MergeFrom(reply)
+    return replywrapper
 
 
 # Handler for all incoming messages
