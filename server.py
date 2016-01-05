@@ -11,14 +11,13 @@
 import select
 import socket
 import ssl
-import string
 import struct
 import sys
 import zlib
 
 from messages.c2s_pb2 import ServerHello, StoreReply, DeleteReply, GetReply
 from messages.metaMessage_pb2 import Wrapper
-from messages.studyMessage_pb2 import StudyCreate, StudyCreateReply, StudyDelete, StudyDeleteReply, StudyWrapper, StudyIdentifierRequest, StudyIdentifierReply, StudyJoinQuery, StudyJoinQueryReply, StudyListQuery, StudyListReply
+from messages.studyMessage_pb2 import StudyCreate, StudyCreateReply, StudyDelete, StudyDeleteReply, StudyWrapper, StudyJoinQuery, StudyJoinQueryReply, StudyListQuery, StudyListReply
 from storage.sqlite import SqliteBackend
 from vicbf.vicbf import VICBF
 from hashlib import sha256
