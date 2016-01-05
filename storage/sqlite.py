@@ -194,18 +194,18 @@ class SqliteBackend():
         c = self.conn.cursor()
         # Determine database ID
         c.execute("SELECT id FROM study WHERE ident LIKE ?;",
-                  (sqlite3.Binary(ident)))
+                  (sqlite3.Binary(ident), ))
         try:
-            ident = c.fetchone()[0]
+            dbid = c.fetchone()[0]
         except (IndexError, TypeError):
             return []
         # Read all data blocks related to that study from the DB
         c.execute("SELECT data FROM studyEntry WHERE study LIKE ?;",
-                  (ident, ))
+                  (dbid, ))
         rv = c.fetchall()
         # Delete all database entries related to that study
         c.execute("DELETE FROM studyEntry WHERE study LIKE ?;",
-                  (ident, ))
+                  (dbid, ))
         # Return
         return rv
 
