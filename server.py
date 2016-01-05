@@ -317,11 +317,11 @@ def HandleStudyWrapperMessage(msg, sock):
         debug("Got StudyCreate message")
         return HandleStudyCreateMessage(msg, sock)
     elif mtype == StudyWrapper.MSG_STUDYJOINQUERY:
-        # TODO Ensure semi-constant timing
+        debug("Got StudyCreate message")
         return HandleStudyJoinQuery(msg, sock)
     elif mtype == StudyWrapper.MSG_STUDYDELETE:
-        # TODO Ensure semi-constant timing
-        pass
+        debug("Got StudyDelete message")
+        return HandleStudyDeleteMessage(msg, sock)
     else:
         debug("Unknown message type received")
         return None
@@ -393,6 +393,30 @@ def HandleStudyJoinQuery(msg, sock):
     # Prepare and return reply wrapper
     wrapper = Wrapper()
     wrapper.StudyJoinQueryReply.MergeFrom(reply)
+    return wrapper
+
+
+def HandleStudyDeleteMessage(msg, sock):
+    # We received a StudyDelete message
+    # Prepare a StudyDeleteReply
+    reply = StudyDeleteReply()
+    # Parse StudyDelete
+    request = StudyDelete.ParseFromString(msg.message)
+    # Retrieve public key from database
+    pkey_bin = DatabaseBackend.query_study_pkey(request.queueIdentifier)
+    if pkey_bin is not None:
+        # Found a public key
+        pkey = pubkeyFromBytes(pkey_bin)
+        if not verifyPKCS15_SHA256(pkey, msg.message, msg.signature):
+            reply.status = StudyDeleteReply.DELETE_FAIL_BAD_SIG
+        else:
+            # Verification worked, delete Study
+            DatabaseBackend.delete_study(request.queueIdentifier)
+    else:
+        reply.status = StudyDeleteReply.DELETE_FAIL_BAD_IDENT
+    # Prepare, fill and return wrapper
+    wrapper = Wrapper()
+    wrapper.StudyDeleteReply.MergeFrom(reply)
     return wrapper
 
 
