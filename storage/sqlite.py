@@ -172,7 +172,7 @@ class SqliteBackend():
 
         # Determine Database ID of study
         c.execute("SELECT id FROM study WHERE ident LIKE ?;",
-                  (sqlite3.Binary(ident)))
+                  (sqlite3.Binary(ident), ))
         # Fetch result
         try:
             pkey = c.fetchone()[0]
