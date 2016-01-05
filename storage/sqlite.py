@@ -214,7 +214,7 @@ class SqliteBackend():
         c = self.conn.cursor()
         # Run query
         c.execute("SELECT pubkey FROM study WHERE ident LIKE ?;",
-                  (sqlite3.Binary(ident)))
+                  (sqlite3.Binary(ident), ))
         # Return result
         try:
             return c.fetchone()[0]
