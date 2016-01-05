@@ -206,6 +206,21 @@ def HandleStoreMessage(msg, sock):
             # An unexpected exception was thrown - this indicates a bug
             debug("ERROR: Unexpected exception: " + repr(e))
             rv.opcode = StoreReply.STORE_FAIL_UNKNOWN
+    elif queueFormatValid(msg.key):
+        # Key is not a regular message, but an encrypted StudyJoin
+        try:
+            # Insert into queue
+            if DatabaseBackend.insert_studyjoin(msg.key, msg.value):
+                # Insert into queue worked
+                rv.opcode = StoreReply.STORE_OK
+            else:
+                rv.opcode = StoreReply.STORE_FAIL_KEY_FMT
+                # Not strictly true, the key format is fine
+                # TODO Fix?
+        except Exception, e:
+            # Unexpected exception was thrown - bug?
+            debug("ERROR: Unexpected exception: " + repr(e))
+            rv.opcode = StoreReply.STORE_FAIL_UNKNOWN
     else:
         # Key has an invalid format, ignore message
         debug("WARN: Invalid key format")
@@ -303,7 +318,7 @@ def HandleStudyWrapperMessage(msg, sock):
         return HandleStudyCreateMessage(msg, sock)
     elif mtype == StudyWrapper.MSG_STUDYJOINQUERY:
         # TODO Ensure semi-constant timing
-        pass
+        return HandleStudyJoinQuery(msg, sock)
     elif mtype == StudyWrapper.MSG_STUDYDELETE:
         # TODO Ensure semi-constant timing
         pass
@@ -351,6 +366,34 @@ def HandleStudyListRequest(msg, sock):
     replywrapper = Wrapper()
     replywrapper.StudyListReply.MergeFrom(reply)
     return replywrapper
+
+
+def HandleStudyJoinQuery(msg, sock):
+    # We received a StudyJoinQuery message
+    # Prepare a StudyJoinQueryReply
+    reply = StudyJoinQueryReply()
+    # Parse StudyJoinQuery message from msg
+    request = StudyJoinQuery()
+    request.ParseFromString(msg.message)
+    # Retrieve public key from database
+    pkey_bin = DatabaseBackend.query_study_pkey(request.queueIdentifier)
+    if pkey_bin is not None:
+        # Found a public key
+        pkey = pubkeyFromBytes(pkey_bin)
+        if not verifyPKCS15_SHA256(pkey, msg.message, msg.signature):
+            reply.opcode = StudyJoinQueryReply.STATUS_FAIL_SIGNATURE
+        else:
+            reply.opcode = StudyJoinQueryReply.STATUS_OK
+            blocks = DatabaseBackend.query_study(request.queueIdentifier)
+            for element in blocks:
+                reply.message += [element[0]]
+    else:
+        # No public key found => No such study
+        reply.opcode = StudyJoinQueryReply.STATUS_FAIL_NOT_FOUND
+    # Prepare and return reply wrapper
+    wrapper = Wrapper()
+    wrapper.StudyJoinQueryReply.MergeFrom(reply)
+    return wrapper
 
 
 # Handler for all incoming messages
