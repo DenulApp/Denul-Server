@@ -381,15 +381,15 @@ def HandleStudyJoinQuery(msg, sock):
         # Found a public key
         pkey = pubkeyFromBytes(pkey_bin)
         if not verifyPKCS15_SHA256(pkey, msg.message, msg.signature):
-            reply.opcode = StudyJoinQueryReply.STATUS_FAIL_SIGNATURE
+            reply.status = StudyJoinQueryReply.STATUS_FAIL_SIGNATURE
         else:
-            reply.opcode = StudyJoinQueryReply.STATUS_OK
+            reply.status = StudyJoinQueryReply.STATUS_OK
             blocks = DatabaseBackend.query_study(request.queueIdentifier)
             for element in blocks:
                 reply.message += [element[0]]
     else:
         # No public key found => No such study
-        reply.opcode = StudyJoinQueryReply.STATUS_FAIL_NOT_FOUND
+        reply.status = StudyJoinQueryReply.STATUS_FAIL_NOT_FOUND
     # Prepare and return reply wrapper
     wrapper = Wrapper()
     wrapper.StudyJoinQueryReply.MergeFrom(reply)
