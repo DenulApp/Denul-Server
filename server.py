@@ -344,14 +344,16 @@ def HandleStudyCreateMessage(msg, sock):
         return wrapper
     if not queueFormatValid(screate.queueIdentifier):
         debug("ERROR: Invalid queue identifier")
-        sreply.status = StudyCreateReply.CREATE_FAIL_IDENTIFIER
+        sreply.status = StudyCreateReply.CREATE_FAIL_BAD_IDENTIFIER
         wrapper.StudyCreateReply.MergeFrom(sreply)
         return wrapper
     # Insert into database
-    DatabaseBackend.insert_study(screate.queueIdentifier, screate.publicKey,
-                                 msg)
-    # Prepare reply
-    sreply.status = StudyCreateReply.CREATE_OK
+    if DatabaseBackend.insert_study(screate.queueIdentifier, screate.publicKey,
+                                    msg):
+        # Prepare reply
+        sreply.status = StudyCreateReply.CREATE_OK
+    else:
+        sreply.status = StudyCreateReply.CREATE_FAIL_IDENTIFIER_TAKEN
     wrapper.StudyCreateReply.MergeFrom(sreply)
     return wrapper
 

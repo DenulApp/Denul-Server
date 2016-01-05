@@ -149,12 +149,17 @@ class SqliteBackend():
         # Get a cursor
         c = self.conn.cursor()
 
+        c.execute("SELECT * FROM study WHERE ident LIKE ?;",
+                  (sqlite3.Binary(ident), ))
+        if c.fetchone() is not None:
+            return False
         # Run insert
         c.execute("INSERT INTO study (ident, pubkey, message) VALUES (?, ?, ?)",
                   (sqlite3.Binary(ident), sqlite3.Binary(pubkey),
                    sqlite3.Binary(msg.SerializeToString())))
         # Commit
         self.conn.commit()
+        return True
 
     def list_studies(self):
         """Get a List of Studies in the database"""
