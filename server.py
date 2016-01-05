@@ -401,7 +401,8 @@ def HandleStudyDeleteMessage(msg, sock):
     # Prepare a StudyDeleteReply
     reply = StudyDeleteReply()
     # Parse StudyDelete
-    request = StudyDelete.ParseFromString(msg.message)
+    request = StudyDelete()
+    request.ParseFromString(msg.message)
     # Retrieve public key from database
     pkey_bin = DatabaseBackend.query_study_pkey(request.queueIdentifier)
     if pkey_bin is not None:
