@@ -413,6 +413,7 @@ def HandleStudyDeleteMessage(msg, sock):
         else:
             # Verification worked, delete Study
             DatabaseBackend.delete_study(request.queueIdentifier)
+            reply.status = StudyDeleteReply.DELETE_OK
     else:
         reply.status = StudyDeleteReply.DELETE_FAIL_BAD_IDENT
     # Prepare, fill and return wrapper
