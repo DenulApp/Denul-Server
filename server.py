@@ -386,7 +386,7 @@ def HandleStudyJoinQuery(msg, sock):
             reply.status = StudyJoinQueryReply.STATUS_OK
             blocks = DatabaseBackend.query_study(request.queueIdentifier)
             for element in blocks:
-                reply.message.append(element[0])
+                reply.message.append(str(element[0]))
     else:
         # No public key found => No such study
         reply.status = StudyJoinQueryReply.STATUS_FAIL_NOT_FOUND
