@@ -316,7 +316,7 @@ def HandleStudyWrapperMessage(msg, sock):
         debug("Got StudyCreate message")
         return HandleStudyCreateMessage(msg, sock)
     elif mtype == StudyWrapper.MSG_STUDYJOINQUERY:
-        debug("Got StudyCreate message")
+        debug("Got StudyJoinQuery message")
         return HandleStudyJoinQuery(msg, sock)
     elif mtype == StudyWrapper.MSG_STUDYDELETE:
         debug("Got StudyDelete message")
