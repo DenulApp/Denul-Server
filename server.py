@@ -11,16 +11,19 @@
 import select
 import socket
 import ssl
-import string
 import struct
 import sys
 import zlib
 
 from messages.c2s_pb2 import ServerHello, StoreReply, DeleteReply, GetReply
 from messages.metaMessage_pb2 import Wrapper
+from messages.studyMessage_pb2 import StudyCreate, StudyCreateReply, StudyDelete, StudyDeleteReply, StudyWrapper, StudyJoinQuery, StudyJoinQueryReply, StudyListQuery, StudyListReply
 from storage.sqlite import SqliteBackend
 from vicbf.vicbf import VICBF
 from hashlib import sha256
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
+from Crypto.Signature import PKCS1_v1_5
 
 
 class Cache():
@@ -56,7 +59,7 @@ THRESH_UP = None
 
 
 ### Logging helper functions
-def debug(string):
+def debug(strng):
     """Print a debugging string if debugging is active.
 
     Displays the function name of the caller to make debugging easier.
@@ -64,7 +67,7 @@ def debug(string):
     http://jugad2.blogspot.in/2015/09/find-caller-and-callers-caller-of.html
     """
     if DEBUG:
-        print sys._getframe(1).f_code.co_name + ":", string
+        print sys._getframe(1).f_code.co_name + ":", strng
 
 
 ### Network helper functions
@@ -93,6 +96,8 @@ def RecvOneMsg(sock):
 
 
 def sendMessage(msg, sock):
+    if msg is None:
+        return
     ms = msg.SerializeToString()
     # mb = [elem.encode('hex') for elem in ms]
     # Messages are sent as byte strings prefixed with their own length
@@ -118,6 +123,23 @@ def invalidateVicbfSerializationCache():
 def keyFormatValid(key):
     return len(key) == 32
 
+
+def queueFormatValid(queue):
+    return len(queue) == 16
+
+
+### Crypto helper functions
+def pubkeyFromBytes(pkcs):
+    return RSA.importKey(pkcs)
+
+
+def verifyPKCS15_SHA256(pub, data, sig):
+    # Create hash object
+    h = SHA256.new(data)
+    # Create verifier
+    verifier = PKCS1_v1_5.new(pub)
+    # Return verification result
+    return verifier.verify(h, sig)
 
 ##### Message Creation Functions
 # Example function:
@@ -181,6 +203,21 @@ def HandleStoreMessage(msg, sock):
             rv.opcode = StoreReply.STORE_FAIL_KEY_TAKEN
         except Exception, e:
             # An unexpected exception was thrown - this indicates a bug
+            debug("ERROR: Unexpected exception: " + repr(e))
+            rv.opcode = StoreReply.STORE_FAIL_UNKNOWN
+    elif queueFormatValid(msg.key):
+        # Key is not a regular message, but an encrypted StudyJoin
+        try:
+            # Insert into queue
+            if DatabaseBackend.insert_studyjoin(msg.key, msg.value):
+                # Insert into queue worked
+                rv.opcode = StoreReply.STORE_OK
+            else:
+                rv.opcode = StoreReply.STORE_FAIL_KEY_FMT
+                # Not strictly true, the key format is fine
+                # TODO Fix?
+        except Exception, e:
+            # Unexpected exception was thrown - bug?
             debug("ERROR: Unexpected exception: " + repr(e))
             rv.opcode = StoreReply.STORE_FAIL_UNKNOWN
     else:
@@ -273,6 +310,119 @@ def HandleGetMessage(msg, sock):
     return wrapper
 
 
+def HandleStudyWrapperMessage(msg, sock):
+    mtype = msg.type
+    if mtype == StudyWrapper.MSG_STUDYCREATE:
+        debug("Got StudyCreate message")
+        return HandleStudyCreateMessage(msg, sock)
+    elif mtype == StudyWrapper.MSG_STUDYJOINQUERY:
+        debug("Got StudyJoinQuery message")
+        return HandleStudyJoinQuery(msg, sock)
+    elif mtype == StudyWrapper.MSG_STUDYDELETE:
+        debug("Got StudyDelete message")
+        return HandleStudyDeleteMessage(msg, sock)
+    else:
+        debug("Unknown message type received")
+        return None
+
+
+def HandleStudyCreateMessage(msg, sock):
+    # Parse StudyCreate
+    screate = StudyCreate()
+    screate.ParseFromString(msg.message)
+    # Prepare reply
+    sreply = StudyCreateReply()
+    sreply.queueIdentifier = screate.queueIdentifier
+    wrapper = Wrapper()
+    # Read out public key and verify signature
+    pub = pubkeyFromBytes(screate.publicKey)
+    if not verifyPKCS15_SHA256(pub, msg.message, msg.signature):
+        debug("ERROR: Invalid signature on message")
+        sreply.status = StudyCreateReply.CREATE_FAIL_SIGNATURE
+        wrapper.StudyCreateReply.MergeFrom(sreply)
+        return wrapper
+    if not queueFormatValid(screate.queueIdentifier):
+        debug("ERROR: Invalid queue identifier")
+        sreply.status = StudyCreateReply.CREATE_FAIL_BAD_IDENTIFIER
+        wrapper.StudyCreateReply.MergeFrom(sreply)
+        return wrapper
+    # Insert into database
+    if DatabaseBackend.insert_study(screate.queueIdentifier, screate.publicKey,
+                                    msg):
+        # Prepare reply
+        sreply.status = StudyCreateReply.CREATE_OK
+    else:
+        sreply.status = StudyCreateReply.CREATE_FAIL_IDENTIFIER_TAKEN
+    wrapper.StudyCreateReply.MergeFrom(sreply)
+    return wrapper
+
+
+def HandleStudyListRequest(msg, sock):
+    # The message itself is not interesting, as it does not contain any
+    # information - it's just an empty request
+    reply = StudyListReply()
+    for msg in DatabaseBackend.list_studies():
+        wrapper = reply.studylist.add()
+        wrapper.ParseFromString(msg[0])
+    replywrapper = Wrapper()
+    replywrapper.StudyListReply.MergeFrom(reply)
+    return replywrapper
+
+
+def HandleStudyJoinQuery(msg, sock):
+    # We received a StudyJoinQuery message
+    # Prepare a StudyJoinQueryReply
+    reply = StudyJoinQueryReply()
+    # Parse StudyJoinQuery message from msg
+    request = StudyJoinQuery()
+    request.ParseFromString(msg.message)
+    # Retrieve public key from database
+    pkey_bin = DatabaseBackend.query_study_pkey(request.queueIdentifier)
+    if pkey_bin is not None:
+        # Found a public key
+        pkey = pubkeyFromBytes(pkey_bin)
+        if not verifyPKCS15_SHA256(pkey, msg.message, msg.signature):
+            reply.status = StudyJoinQueryReply.STATUS_FAIL_SIGNATURE
+        else:
+            reply.status = StudyJoinQueryReply.STATUS_OK
+            blocks = DatabaseBackend.query_study(request.queueIdentifier)
+            for element in blocks:
+                reply.message.append(str(element[0]))
+    else:
+        # No public key found => No such study
+        reply.status = StudyJoinQueryReply.STATUS_FAIL_NOT_FOUND
+    # Prepare and return reply wrapper
+    wrapper = Wrapper()
+    wrapper.StudyJoinQueryReply.MergeFrom(reply)
+    return wrapper
+
+
+def HandleStudyDeleteMessage(msg, sock):
+    # We received a StudyDelete message
+    # Prepare a StudyDeleteReply
+    reply = StudyDeleteReply()
+    # Parse StudyDelete
+    request = StudyDelete()
+    request.ParseFromString(msg.message)
+    # Retrieve public key from database
+    pkey_bin = DatabaseBackend.query_study_pkey(request.queueIdentifier)
+    if pkey_bin is not None:
+        # Found a public key
+        pkey = pubkeyFromBytes(pkey_bin)
+        if not verifyPKCS15_SHA256(pkey, msg.message, msg.signature):
+            reply.status = StudyDeleteReply.DELETE_FAIL_BAD_SIG
+        else:
+            # Verification worked, delete Study
+            DatabaseBackend.delete_study(request.queueIdentifier)
+            reply.status = StudyDeleteReply.DELETE_OK
+    else:
+        reply.status = StudyDeleteReply.DELETE_FAIL_BAD_IDENT
+    # Prepare, fill and return wrapper
+    wrapper = Wrapper()
+    wrapper.StudyDeleteReply.MergeFrom(reply)
+    return wrapper
+
+
 # Handler for all incoming messages
 def HandleMessage(message, sock):
     mtype = message.WhichOneof('message')
@@ -288,6 +438,12 @@ def HandleMessage(message, sock):
     elif mtype == "Get":
         debug("Received Get")
         return HandleGetMessage(message.Get, sock)
+    elif mtype == "StudyWrapper":
+        debug("Received StudyWrapper")
+        return HandleStudyWrapperMessage(message.StudyWrapper, sock)
+    elif mtype == "StudyListQuery":
+        debug("Received StudyListQuery")
+        return HandleStudyListRequest(message.StudyListQuery, sock)
     # and so on
 
 

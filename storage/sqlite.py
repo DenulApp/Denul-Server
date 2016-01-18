@@ -4,6 +4,7 @@ import sqlite3
 
 
 class SqliteBackend():
+    SCHEMA_VERSION = 2
     """The SQLite storage backend of the server application.
 
     Data is saved into and read from a local SQLite database.
@@ -18,8 +19,13 @@ class SqliteBackend():
         dbname -- Name of the DB file. (default: denul.db)
         """
         self.conn = sqlite3.connect(dbname)
-        if not self._validate_layout():
-            self._create_layout()
+
+        # Enable foreign key support
+        c = self.conn.cursor()
+        c.execute("PRAGMA FOREIGN_KEYS = ON;")
+
+        # Validate layout
+        self._validate_layout()
 
     def _validate_layout(self):
         """Validate if the format of the database is sane"""
@@ -29,12 +35,12 @@ class SqliteBackend():
         # Check the user_version pragma
         c.execute("PRAGMA user_version")
         uv = c.fetchone()
-        if uv is None or uv[0] != 1:
-            return False
-        else:
-            return True
-        # I am aware that this is a horrible way to check this.
-        # TODO I will implement a decent check later
+        if uv[0] is 0:
+            # No tables exist
+            self._create_layout()
+        elif uv[0] != self.SCHEMA_VERSION:
+            # Different version, upgrade
+            self._upgrade(uv[0], self.SCHEMA_VERSION)
 
     def _create_layout(self):
         """If a new database has been opened, create the table layout"""
@@ -42,12 +48,26 @@ class SqliteBackend():
         c = self.conn.cursor()
 
         # Create table for key-value-pairs
-        c.execute("CREATE TABLE kv (key blob, value blob)")
+        c.execute("CREATE TABLE kv (key blob, value blob);")
+        c.execute("CREATE TABLE study (id INTEGER PRIMARY KEY, ident BLOB, pubkey BLOB, message BLOB);")
+        c.execute("CREATE TABLE studyEntry (id INTEGER PRIMARY KEY, study INTEGER, data BLOB, FOREIGN KEY (study) REFERENCES study(id) ON DELETE CASCADE);")
         # Set the user_version pragma to indicate the version of the DB layout
-        c.execute("PRAGMA user_version = 1")
+        c.execute("PRAGMA user_version = 2")
 
         # Commit transaction
         self.conn.commit()
+
+    def _upgrade(self, old, new):
+        """Upgrade the database scheme"""
+        c = self.conn.cursor()
+
+        if old == 1 and new == 2:
+            # Add new tables
+            c.execute("CREATE TABLE study (id INTEGER PRIMARY KEY, ident BLOB, pubkey BLOB, message BLOB);")
+            c.execute("CREATE TABLE studyEntry (id INTEGER PRIMARY KEY, study INTEGER, data BLOB, FOREIGN KEY (study) REFERENCES study(id) ON DELETE CASCADE);")
+            c.execute("PRAGMA user_version = 2;")
+        else:
+            print "Unknown database upgrade path:", old, "to", new
 
     def insert_kv(self, key, value):
         """Insert a key-value-pair into the database
@@ -123,6 +143,96 @@ class SqliteBackend():
 
         # return result
         return c.fetchall()
+
+    def insert_study(self, ident, pubkey, msg):
+        """Insert a new study into the database"""
+        # Get a cursor
+        c = self.conn.cursor()
+
+        c.execute("SELECT * FROM study WHERE ident LIKE ?;",
+                  (sqlite3.Binary(ident), ))
+        if c.fetchone() is not None:
+            return False
+        # Run insert
+        c.execute("INSERT INTO study (ident, pubkey, message) VALUES (?, ?, ?)",
+                  (sqlite3.Binary(ident), sqlite3.Binary(pubkey),
+                   sqlite3.Binary(msg.SerializeToString())))
+        # Commit
+        self.conn.commit()
+        return True
+
+    def list_studies(self):
+        """Get a List of Studies in the database"""
+        # Get a cursor
+        c = self.conn.cursor()
+        # Run query
+        c.execute("SELECT message FROM study;")
+        # Return raw result (needs to be parsed into messages by caller)
+        return c.fetchall()
+
+    def insert_studyjoin(self, ident, data):
+        """Insert a studyJoin message into the database"""
+        # Get a cursor
+        c = self.conn.cursor()
+
+        # Determine Database ID of study
+        c.execute("SELECT id FROM study WHERE ident LIKE ?;",
+                  (sqlite3.Binary(ident), ))
+        # Fetch result
+        try:
+            pkey = c.fetchone()[0]
+        except (TypeError, IndexError):
+            # Something went wrong while retrieving the primary key
+            # No such study?
+            return False
+
+        # Run insert
+        c.execute("INSERT INTO studyEntry (study, data) VALUES (?, ?);",
+                  (pkey, sqlite3.Binary(data)))
+        # Commit
+        self.conn.commit()
+        # Indicate success
+        return True
+
+    def query_study(self, ident):
+        # Get a cursor
+        c = self.conn.cursor()
+        # Determine database ID
+        c.execute("SELECT id FROM study WHERE ident LIKE ?;",
+                  (sqlite3.Binary(ident), ))
+        try:
+            dbid = c.fetchone()[0]
+        except (IndexError, TypeError):
+            return []
+        # Read all data blocks related to that study from the DB
+        c.execute("SELECT data FROM studyEntry WHERE study LIKE ?;",
+                  (dbid, ))
+        rv = c.fetchall()
+        # Delete all database entries related to that study
+        c.execute("DELETE FROM studyEntry WHERE study LIKE ?;",
+                  (dbid, ))
+        # Return
+        return rv
+
+    def query_study_pkey(self, ident):
+        # Get a cursor
+        c = self.conn.cursor()
+        # Run query
+        c.execute("SELECT pubkey FROM study WHERE ident LIKE ?;",
+                  (sqlite3.Binary(ident), ))
+        # Return result
+        try:
+            return c.fetchone()[0]
+        except (TypeError, IndexError):
+            return None
+
+    def delete_study(self, ident):
+        # Get a cursor
+        c = self.conn.cursor()
+        # Run query
+        c.execute("DELETE FROM study WHERE ident LIKE ?;",
+                  (sqlite3.Binary(ident), ))
+        return c.rowcount == 1
 
     def close(self):
         """Close the database connection"""
