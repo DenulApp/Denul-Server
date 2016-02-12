@@ -29,7 +29,7 @@ class VICBF():
     MODE_DUMP_ALL  = 0
     MODE_SELECTIVE = 1
 
-    def __init__(self, slots, hash_functions, vibase=4, bpc=8):
+    def __init__(self, slots, hash_functions, vibase=4):
         """Counstructor for the VICBF.
 
         Attributes:
@@ -56,7 +56,7 @@ class VICBF():
         self.hash_functions = hash_functions
         self.L = vibase
         # Number of bits per counter
-        self.bpc = bpc
+        self.bpc = 8
         # Number of bits per counter index - will be used during serialization
         self.bpi = ceil(log(self.slots, 2) / 8) * 8
 
@@ -196,76 +196,32 @@ class VICBF():
 
     def serialize(self):
         """Serialize the VICBF into a binary data structure and return it."""
-        # For serialization, we have two options:
-        # - We can serialize as indexed key-value-pairs for individual slot
-        #   numbers and counter values. This would cost us self.bpc bit per
-        #   counter value, plus self.bpi per index.
-        # - We can just dump all values as self.bpc bit values, inserting
-        #   zeroes where counters are not set. This will cost us a constant
-        #   "self.bpc * number of slots" bit
-        # Which one of these schemes is more efficient depends on the number
-        # of set counters: If only very few counters are set, it's more
-        # efficient to dump indexed counter values. If a large number of
-        # counters is set, dumping everything avoids the overhead of the index.
-        # The following calculation determines which is more efficient:
-        if len(self.BF) * (self.bpi + self.bpc) > self.slots * self.bpc:
-            # If this statement is reached, it is more efficient to write out
-            # all values in the bloom filter as self.bpc-bit values instead
-            # of writing indexed slot-counter pairs
-            # Get the header of the serialized data
-            serialized = self._build_header(self.MODE_DUMP_ALL)
-            # Determine the format it will be serialized in
-            if self.bpc == 8:
-                # We are using 8-bit counters. This means that we can serialize
-                # the counters as 8-bit unsigned integers, which is much more
-                # efficient than the alternative below.
-                def BFGenerator():
-                    for i in range(self.slots):
-                        try:
-                            yield self.BF[i]
-                        except KeyError:
-                            yield 0
-                generator = BFGenerator()
-                serialized.append(bytearray(generator))
-            else:
-                # We are not using 8-bit counters - use the slow method to
-                # serialize the data
-                fmt = 'uint:' + str(self.bpc)
-                # Start serializing
-                for slot in range(self.slots):
-                    # TODO This needs to be optimized, it's slow as hell
+        serialized = self._build_header()
+        # Determine the format it will be serialized in
+        if self.bpc == 8:
+            # We are using 8-bit counters. This means that we can serialize
+            # the counters as 8-bit unsigned integers, which is much more
+            # efficient than the alternative below.
+            def BFGenerator():
+                for i in range(self.slots):
                     try:
-                        serialized.append(pack(fmt, self.BF[slot]))
+                        yield self.BF[i]
                     except KeyError:
-                        # If we get a key error, it means that the counter is not
-                        # set and thus implicitly has the value zero
-                        serialized.append(pack(fmt, 0))
+                        yield 0
+            generator = BFGenerator()
+            serialized.append(bytearray(generator))
             # Return the serialized data
             return serialized
         else:
-            # If this statement is reached, it is more efficient to write out
-            # indexed slot-counter-pairs.
-            # Get the header for the serialized data
-            serialized = self._build_header(self.MODE_SELECTIVE)
-            # Determine the format it will be serialized in
-            fmt_ctr = 'uint:' + str(int(self.bpc))
-            fmt_idx = 'uint:' + str(int(self.bpi))
-            fmt = fmt_idx + ", " + fmt_ctr
-            # Serialize existing slots with their counters
-            for slot in self.BF:
-                serialized.append(pack(fmt, slot, self.BF[slot]))
-            # Return serialized data
-            return serialized
+            raise AssertionError("Bad BPC")
 
-    def _build_header(self, mode):
+    def _build_header(self):
         # Prepare header. Format:
-        # - 1 bit Mode indicator (MODE_DUMP_ALL / MODE_SELECTIVE)
-        # - 3 bit hash function count indicator
+        # - 8 bit hash function count indicator
         # - 32 bit slot count indicator
         # - 4 bit vibase indicator
         # - 4 bit counter size indicator
-        header = pack('uint:1, uint:7, uint:32, uint:32, uint:4, uint:4',
-                      mode,
+        header = pack('uint:8, uint:32, uint:32, uint:4, uint:4',
                       self.hash_functions,
                       self.slots,
                       self.entries,
@@ -345,35 +301,23 @@ class VICBF():
 
 
 def deserialize(serialized):
-    mode, hash_functions, slots, size, vibase, bpc = _parse_header(serialized)
-    deser = VICBF(slots, hash_functions, vibase=vibase, bpc=bpc)
+    hash_functions, slots, size, vibase, bpc = _parse_header(serialized)
+    assert bpc == 8
+    deser = VICBF(slots, hash_functions, vibase=vibase)
     deser.entries = size
-    if mode == VICBF.MODE_DUMP_ALL:
-        # The rest of the serialized data contains counter values of bpc bits,
-        # in order from slot 0 to slot slots-1
-        fmt = 'uint:' + str(bpc)
-        # Read in the values and write them into the bloom filter
-        for i in range(slots):
-            deser.BF[i] = serialized.read(fmt)
-    else:
-        # The rest of the serialized data contains index-counter-pairs with
-        # bpi index bits and bpc counter bits.
-        fmt_ctr = 'uint:' + str(int(bpc))
-        fmt_idx = 'uint:' + str(int(deser.bpi))
-        fmt = fmt_idx + ", " + fmt_ctr
-        # read in index-counter-pairs until we run out
-        while True:
-            try:
-                idx, ctr = serialized.readlist(fmt)
-                deser.BF[idx] = ctr
-            except ReadError:
-                break
+
+    # The rest of the serialized data contains counter values of bpc bits,
+    # in order from slot 0 to slot slots-1
+    fmt = 'uint:' + str(bpc)
+    # Read in the values and write them into the bloom filter
+    for i in range(slots):
+        deser.BF[i] = serialized.read(fmt)
     return deser
 
 
 def _parse_header(serialized):
     """Parse the header and return the contained values.
 
-    Returns the header as (mode, hash_functions, slots, size, vibase, bpc)
+    Returns the header as (hash_functions, slots, size, vibase, bpc)
     """
-    return serialized.readlist('uint:1, uint:7, uint:32, uint:32, uint:4, uint:4')
+    return serialized.readlist('uint:8, uint:32, uint:32, uint:4, uint:4')

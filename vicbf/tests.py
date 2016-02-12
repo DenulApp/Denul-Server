@@ -253,17 +253,6 @@ def test_serialization_dumpselective():
     assert 124 not in v2
 
 
-def test_serialization_dumpall_bpc7():
-    v = VICBF(10000, 3, bpc=7)
-    for i in range(5000):
-        v += i
-    ser = v.serialize()
-    v2 = deserialize(ser)
-    assert v.size() == v2.size()
-    for i in range(5000):
-        assert i in v2
-
-
 def test_deletion_regression():
     # This is a regression test for the deletion bug described in commit
     # 85bef853ee5927deffc13d16e9a79be8a9756d6c. Basically, a deletion could
@@ -280,6 +269,3 @@ def test_deletion_regression():
         pass
     v -= 106
     assert 771 in v
-
-
-# test_serialization_dumpall_bpc7()
